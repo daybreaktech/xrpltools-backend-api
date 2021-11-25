@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/airdrop/schedules")
+@RequestMapping("${v1API}/airdrop/schedules")
 public class AirdropScheduleController {
 
     @GetMapping("/")
