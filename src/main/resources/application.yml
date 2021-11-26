@@ -1,1 +1,5 @@
 v1API: /api/v1
+
+spring:
+  profiles:
+      active: @activatedProperties@

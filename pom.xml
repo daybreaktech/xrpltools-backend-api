@@ -40,6 +40,7 @@
 
 	</dependencies>
 
+
 	<build>
 		<plugins>
 			<plugin>
@@ -67,6 +68,9 @@
 					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
+			<properties>
+				<activatedProperties>prod</activatedProperties>
+			</properties>
 		</profile>
 		<profile>
 			<id>dev</id>
@@ -77,6 +81,9 @@
 					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
+			<properties>
+				<activatedProperties>dev</activatedProperties>
+			</properties>
 		</profile>
 	</profiles>
 
