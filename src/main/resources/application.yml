@@ -1,19 +1,1 @@
 v1API: /api/v1
-
-server:
-  port : 9191
-
-spring:
-  datasource:
-    url: jdbc:sqlserver://xrpltools-sql-server.database.windows.net:1433;database=xrpltools-db-instance;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: xrpltools
-    password: Pass1word
-  task:
-    scheduling:
-      pool:
-        size: 10
-  jpa:
-    hibernate:
-      ddl-auto: create
-      dialect: org.hibernate.dialect.SQLServer2012Dialect
-    show-sql: false
