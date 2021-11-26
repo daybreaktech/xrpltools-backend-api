@@ -17,4 +17,3 @@ spring:
       ddl-auto: create
       dialect: org.hibernate.dialect.SQLServer2012Dialect
     show-sql: false
-    
