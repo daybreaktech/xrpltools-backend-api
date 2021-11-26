@@ -1,2 +1,17 @@
 server:
   port : 8081
+
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.20.242:3306/xrpltools
+    username: xrpltools
+    password: xrpltools
+  task:
+    scheduling:
+      pool:
+        size: 10
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database: mysql
