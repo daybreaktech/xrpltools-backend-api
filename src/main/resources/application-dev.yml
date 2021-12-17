@@ -3,7 +3,8 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://192.168.20.242:3306/xrpltools
+    #url: jdbc:mysql://192.168.20.242:3306/xrpltools
+    url: jdbc:mysql://localhost:3306/xrpltools
     username: xrpltools
     password: xrpltools
   task:

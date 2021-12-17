@@ -1,13 +1,13 @@
 package com.daybreaktech.xrpltools.backendapi.domain;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter @NoArgsConstructor
+@Getter @Setter @Builder
 public class Sample {
 
     @Id
