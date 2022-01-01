@@ -1,5 +1,6 @@
 package com.daybreaktech.xrpltools.backendapi.controller;
 
+import com.daybreaktech.xrpltools.backendapi.helpers.ResourceResponseUtil;
 import com.daybreaktech.xrpltools.backendapi.resource.TrustlineResource;
 import com.daybreaktech.xrpltools.backendapi.service.TrustlineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${v1API}/trustlines")
+@CrossOrigin("${web-ui}")
 public class TrustlineController {
 
     @Autowired
@@ -18,13 +20,15 @@ public class TrustlineController {
         return ResponseEntity.ok(trustlineService.getTrustlines());
     }
 
-    @PostMapping
+    @GetMapping("/search")
+    private ResponseEntity searchTrustline(@RequestParam("key") String key) {
+        return ResponseEntity.ok(trustlineService.searchTrustline(key));
+    }
+
+    @PostMapping("/")
     private ResponseEntity saveTrustline(@RequestBody TrustlineResource trustlineResource) throws Exception {
-        if (trustlineResource.getId() == null) {
-            return ResponseEntity.ok(trustlineService.createTrustline(trustlineResource));
-        } else {
-            return ResponseEntity.ok(trustlineService.editTrustline(trustlineResource));
-        }
+        trustlineService.createTrustline(trustlineResource);
+        return ResponseEntity.ok(ResourceResponseUtil.success());
     }
 
 }

@@ -22,14 +22,13 @@ public class ScheduleCategoryService {
     @Autowired
     private AirdropScheduleRepository airdropScheduleRepository;
 
-    @Transactional
     public void updateScheduleCategory(List<ScheduleCategoryResource> scheduleCategoryResources) {
         List<ScheduleCategory> categoryList = new ArrayList<>();
-
-        scheduleCategoryRepository.deleteAll();
-
         scheduleCategoryResources.stream().map(scheduleCategoryResource -> convertToScheduleCategory(scheduleCategoryResource)).forEach(categoryList::add);
-        scheduleCategoryRepository.saveAll(categoryList);
+        scheduleCategoryRepository.deleteAll();
+        if (categoryList != null && !categoryList.isEmpty()) {
+            scheduleCategoryRepository.saveAll(categoryList);
+        }
     }
 
     private ScheduleCategory convertToScheduleCategory(ScheduleCategoryResource scheduleCategoryResource) {

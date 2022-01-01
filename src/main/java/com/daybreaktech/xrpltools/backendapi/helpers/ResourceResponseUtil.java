@@ -18,4 +18,12 @@ public class ResourceResponseUtil {
                 .build();
     }
 
+    public static APIResponse error(Integer code, String message) {
+        return APIResponse.builder()
+                .code(code)
+                .errorMessage(message)
+                .status(ApiResponseStatus.FAIL)
+                .build();
+    }
+
 }

@@ -1,11 +1,13 @@
 package com.daybreaktech.xrpltools.backendapi.service;
 
 import com.daybreaktech.xrpltools.backendapi.domain.Trustline;
+import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
 import com.daybreaktech.xrpltools.backendapi.repository.TrustlineRepository;
 import com.daybreaktech.xrpltools.backendapi.resource.TrustlineResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,14 @@ public class TrustlineService {
 
     public List<TrustlineResource> getTrustlines() {
         List<TrustlineResource> trustlineResources = new ArrayList<>();
-        List<Trustline> trustlines = (List<Trustline>) trustlineRepository.findAll();
+        List<Trustline> trustlines = (List<Trustline>) trustlineRepository.findTrustlinesByDateAdded();
+        trustlines.stream().map(trustline -> convertToResource(trustline)).forEach(trustlineResources::add);
+        return trustlineResources;
+    }
+
+    public List<TrustlineResource> searchTrustline(String key) {
+        List<TrustlineResource> trustlineResources = new ArrayList<>();
+        List<Trustline> trustlines = (List<Trustline>) trustlineRepository.findTrustlinesBySearchKey(key);
         trustlines.stream().map(trustline -> convertToResource(trustline)).forEach(trustlineResources::add);
         return trustlineResources;
     }
@@ -25,27 +34,35 @@ public class TrustlineService {
     private TrustlineResource convertToResource(Trustline trustline) {
         return TrustlineResource.builder()
                 .id(trustline.getId())
+                .name(trustline.getName())
                 .currencyCode(trustline.getCurrencyCode())
                 .issuerAddress(trustline.getIssuerAddress())
+                .limit(trustline.getLimit())
                 .twitterUrl(trustline.getTwitterUrl())
                 .website(trustline.getWebsiteUrl())
+                .dateAdded(trustline.getDateAdded())
                 .build();
     }
 
     public Trustline createTrustline(TrustlineResource trustlineResource) throws Exception {
-        if (!validateIfTrustlineExist(trustlineResource)) {
-            Trustline trustline = Trustline.builder()
-                    .currencyCode(trustlineResource.getCurrencyCode())
-                    .issuerAddress(trustlineResource.getIssuerAddress())
-                    .limit(trustlineResource.getLimit())
-                    .twitterUrl(trustlineResource.getTwitterUrl())
-                    .websiteUrl(trustlineResource.getWebsite())
-                    .build();
 
-            return trustlineRepository.save(trustline);
-        } else {
-            throw new Exception("Trustline address and currency code already exist");
+        if (validateIfTrustlineExist(trustlineResource)) {
+            throw new XrplToolsException(409,
+                    String.format("Trustline/Token %s already exist!",
+                            trustlineResource.getName()));
         }
+
+        Trustline trustline = Trustline.builder()
+                .name(trustlineResource.getName())
+                .currencyCode(trustlineResource.getCurrencyCode())
+                .issuerAddress(trustlineResource.getIssuerAddress())
+                .limit(trustlineResource.getLimit())
+                .twitterUrl(trustlineResource.getTwitterUrl())
+                .websiteUrl(trustlineResource.getWebsite())
+                .dateAdded(LocalDateTime.now())
+                .build();
+
+        return trustlineRepository.save(trustline);
     }
 
     public boolean validateIfTrustlineExist(TrustlineResource trustlineResource) {

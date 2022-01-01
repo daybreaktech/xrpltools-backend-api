@@ -21,6 +21,6 @@ public class AirdropScheduleResource {
     private String status;
     private String category;
     private List<String> tags;
-    private Long trustlineId;
+    private TrustlineResource trustline;
 
 }

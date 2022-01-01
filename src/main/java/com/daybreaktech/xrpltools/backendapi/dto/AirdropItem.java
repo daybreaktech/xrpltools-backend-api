@@ -19,6 +19,7 @@ public class AirdropItem {
     private String issuerAddress;
     private String currencyCode;
     private String limit;
+    private String tokenName;
     private String twitterUrl;
     private String websiteUrl;
 

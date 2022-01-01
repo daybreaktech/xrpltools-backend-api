@@ -4,6 +4,7 @@ import lombok.*;
 import org.springframework.context.annotation.Lazy;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,6 +17,7 @@ public class Trustline {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    private String name;
     private String issuerAddress;
     private String currencyCode;
 
@@ -25,8 +27,11 @@ public class Trustline {
     private String twitterUrl;
     private String websiteUrl;
 
+    private LocalDateTime dateAdded;
+
     @Lazy
     @OneToMany(mappedBy="trustline")
     private List<AirdropSchedule> airdropSchedules;
+
 
 }

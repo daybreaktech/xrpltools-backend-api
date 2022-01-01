@@ -11,7 +11,6 @@ import lombok.ToString;
 @ToString
 public class ScheduleCategoryResource {
 
-    private Long id;
     private String category;
     private Integer order;
     private Long airdropId;

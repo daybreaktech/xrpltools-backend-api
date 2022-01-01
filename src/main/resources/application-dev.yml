@@ -16,3 +16,6 @@ spring:
       ddl-auto: update
     show-sql: false
     database: mysql
+
+web-ui: http://localhost:9527/
+web-ui-main: http://localhost:9528/
