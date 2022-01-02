@@ -25,7 +25,7 @@ public class XrplAdminUser {
     @Enumerated(value = EnumType.STRING)
     private UserStatus status;
 
-    @OneToMany(mappedBy = "xrplAdminUser", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "xrplAdminUser", cascade = CascadeType.ALL)
     private List<XrplAdminRole> roles;
 
 }

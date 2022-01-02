@@ -3,3 +3,8 @@ v1API: /api/v1
 spring:
   profiles:
       active: @activatedProperties@
+
+app:
+  xrpl-tools:
+    jwtSecret: beribaysSecret
+    jwtExpirationMs: 86400000

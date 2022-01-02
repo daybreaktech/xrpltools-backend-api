@@ -1,17 +1,33 @@
 server:
   port : 9191
 
+
 spring:
   datasource:
-    url: jdbc:sqlserver://xrpltools-sql-server.database.windows.net:1433;database=xrpltools-db-instance;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    url: jdbc:mysql://10.0.0.4:3306/xrpltools
     username: xrpltools
-    password: Pass1word
+    password: Pass1word12345
   task:
     scheduling:
       pool:
         size: 10
   jpa:
     hibernate:
-      ddl-auto: update
-      dialect: org.hibernate.dialect.SQLServer2012Dialect
+      ddl-auto: create
     show-sql: false
+    database: mysql
+
+#spring:
+#  datasource:
+#    url: jdbc:sqlserver://xrpltools-sql-server.database.windows.net:1433;database=xrpltools-db-instance;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+#    username: xrpltools
+#    password: Pass1word
+#  task:
+#    scheduling:
+#      pool:
+#        size: 10
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#      dialect: org.hibernate.dialect.SQLServer2012Dialect
+#    show-sql: false
