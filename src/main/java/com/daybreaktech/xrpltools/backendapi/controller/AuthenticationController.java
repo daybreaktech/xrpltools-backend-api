@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,8 +26,17 @@ public class AuthenticationController {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/login/")
     private ResponseEntity login(@RequestBody LoginResource loginResource) throws XrplToolsException {
+
+        String encodedPassword = passwordEncoder.encode(loginResource.getPassword());
+        String password = loginResource.getPassword();
+        
+        System.out.println("PASSWORD = " + password + " ENCONDED = " + encodedPassword);
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginResource.getUsername(), loginResource.getPassword()));
 
