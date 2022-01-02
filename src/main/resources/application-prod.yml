@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://20.127.73.70:3306/xrpltools
-    username: xrpltools
-    password: Pass1word12345
+    username: xrpldbuser
+    password: Pass1word
   task:
     scheduling:
       pool:
