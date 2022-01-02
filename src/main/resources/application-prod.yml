@@ -1,7 +1,6 @@
 server:
   port : 9191
 
-
 spring:
   datasource:
     url: jdbc:mysql://10.0.0.4:3306/xrpltools
@@ -16,6 +15,9 @@ spring:
       ddl-auto: create
     show-sql: false
     database: mysql
+
+web-ui: https://xrpltoolsadmin.github.io/
+web-ui-main: notyet
 
 #spring:
 #  datasource:
