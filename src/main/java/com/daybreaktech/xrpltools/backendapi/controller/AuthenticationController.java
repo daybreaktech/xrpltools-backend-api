@@ -34,7 +34,7 @@ public class AuthenticationController {
 
         String encodedPassword = passwordEncoder.encode(loginResource.getPassword());
         String password = loginResource.getPassword();
-        
+
         System.out.println("PASSWORD = " + password + " ENCONDED = " + encodedPassword);
 
         Authentication authentication = authenticationManager.authenticate(
