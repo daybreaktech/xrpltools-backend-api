@@ -71,7 +71,7 @@ public class UserService {
         UserResource userResource = UserResource.builder()
                 .email("xrpltools@gmail.com")
                 .username("xrpltoolsadmin")
-                .password(passwordEncoder.encode("Pass1word"))
+                .password("Pass1word")
                 .roles(Arrays.asList(new String[] {"SUPER_ADMIN"}))
                 .build();
         try {
