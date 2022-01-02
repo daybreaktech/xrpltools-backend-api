@@ -6,6 +6,8 @@ import com.daybreaktech.xrpltools.backendapi.helpers.ResourceResponseUtil;
 import com.daybreaktech.xrpltools.backendapi.resource.AuthenticatedResource;
 import com.daybreaktech.xrpltools.backendapi.resource.LoginResource;
 import com.daybreaktech.xrpltools.backendapi.security.jwt.JwtService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,13 +31,15 @@ public class AuthenticationController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    protected final Log logger = LogFactory.getLog(this.getClass());
+
     @PostMapping("/login/")
     private ResponseEntity login(@RequestBody LoginResource loginResource) throws XrplToolsException {
 
         String encodedPassword = passwordEncoder.encode(loginResource.getPassword());
         String password = loginResource.getPassword();
 
-        System.out.println("PASSWORD = " + password + " ENCONDED = " + encodedPassword);
+        logger.info("PASSWORD = " + password + " ENCONDED = " + encodedPassword);
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginResource.getUsername(), loginResource.getPassword()));
