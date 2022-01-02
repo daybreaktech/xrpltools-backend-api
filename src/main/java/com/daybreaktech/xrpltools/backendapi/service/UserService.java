@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -58,6 +60,26 @@ public class UserService {
        if (user != null) {
            throw new XrplToolsException(409, "Username or Email already exist");
        }
+    }
+
+    @PostConstruct
+    public void postContract() {
+        createSuperAdminAccount();
+    }
+
+    private void createSuperAdminAccount() {
+        UserResource userResource = UserResource.builder()
+                .email("xrpltools@gmail.com")
+                .username("xrpltoolsadmin")
+                .password(passwordEncoder.encode("Pass1word"))
+                .roles(Arrays.asList(new String[] {"SUPER_ADMIN"}))
+                .build();
+        try {
+            validateUsernameAndEmail(userResource.getUsername(), userResource.getEmail());
+            registerUser(userResource);
+        } catch (Exception e) {
+            System.out.println("Error creating superadmin account: " + e);
+        }
     }
 
 }
