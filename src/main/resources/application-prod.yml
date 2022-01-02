@@ -12,7 +12,7 @@ spring:
         size: 10
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
     database: mysql
 
