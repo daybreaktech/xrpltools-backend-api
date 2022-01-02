@@ -6,6 +6,7 @@ spring:
     url: jdbc:mysql://20.127.73.70:3306/xrpltools
     username: xrpldbuser
     password: Pass1word
+    max-lifetime: 600000
   task:
     scheduling:
       pool:
