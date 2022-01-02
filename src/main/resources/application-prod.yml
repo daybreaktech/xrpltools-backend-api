@@ -17,7 +17,7 @@ spring:
     database: mysql
 
 web-ui: https://xrpltoolsadmin.github.io/
-web-ui-main: notyet
+web-ui-main: https://xrpltools-api.azurewebsites.net/
 
 #spring:
 #  datasource:
