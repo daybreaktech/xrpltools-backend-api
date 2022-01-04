@@ -17,6 +17,18 @@ public class TrustlineService {
     @Autowired
     private TrustlineRepository trustlineRepository;
 
+    public TrustlineResource getTrustlineResource(Long id) {
+        Trustline trustline = trustlineRepository.findById(id).get();
+        return convertToResource(trustline);
+    }
+
+    public void updateTrustlineInfo(TrustlineResource trustlineResource) {
+        Trustline trustline = trustlineRepository.findById(trustlineResource.getId()).get();
+        trustline.setTwitterUrl(trustlineResource.getTwitterUrl());
+        trustline.setImageUrl(trustlineResource.getImageUrl());
+        trustlineRepository.save(trustline);
+    }
+
     public List<TrustlineResource> getTrustlines() {
         List<TrustlineResource> trustlineResources = new ArrayList<>();
         List<Trustline> trustlines = (List<Trustline>) trustlineRepository.findTrustlinesByDateAdded();
@@ -38,6 +50,7 @@ public class TrustlineService {
                 .currencyCode(trustline.getCurrencyCode())
                 .issuerAddress(trustline.getIssuerAddress())
                 .limit(trustline.getLimit())
+                .imageUrl(trustline.getImageUrl())
                 .twitterUrl(trustline.getTwitterUrl())
                 .website(trustline.getWebsiteUrl())
                 .dateAdded(trustline.getDateAdded())
@@ -58,6 +71,7 @@ public class TrustlineService {
                 .issuerAddress(trustlineResource.getIssuerAddress())
                 .limit(trustlineResource.getLimit())
                 .twitterUrl(trustlineResource.getTwitterUrl())
+                .imageUrl(trustlineResource.getImageUrl())
                 .websiteUrl(trustlineResource.getWebsite())
                 .dateAdded(LocalDateTime.now())
                 .build();

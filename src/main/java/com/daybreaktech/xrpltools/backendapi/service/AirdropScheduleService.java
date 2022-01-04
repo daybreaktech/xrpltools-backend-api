@@ -123,6 +123,9 @@ public class AirdropScheduleService {
                 .status(Status.valueOf(airdropScheduleResource.getStatus()))
                 .trustline(trustline)
                 .tags(tags)
+                .refsUrl(airdropScheduleResource.getRefsUrl())
+                .imageUrl(airdropScheduleResource.getImageUrl())
+                .useTrustlineImg(airdropScheduleResource.getUseTrustlineImg())
                 .build();
     }
 
@@ -146,6 +149,9 @@ public class AirdropScheduleService {
                 .airdropDate(airdropSchedule.getAirdropDate())
                 .status(airdropSchedule.getStatus().name())
                 .category(categoryName)
+                .refsUrl(airdropSchedule.getRefsUrl())
+                .imageUrl(airdropSchedule.getImageUrl())
+                .useTrustlineImg(airdropSchedule.getUseTrustlineImg())
                 .tags(tags)
                 .trustline(convertToResource(airdropSchedule.getTrustline()))
                 .build();

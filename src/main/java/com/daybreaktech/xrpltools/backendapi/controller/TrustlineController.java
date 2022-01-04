@@ -20,6 +20,17 @@ public class TrustlineController {
         return ResponseEntity.ok(trustlineService.getTrustlines());
     }
 
+    @PutMapping("/")
+    private ResponseEntity updateTrustline(@RequestBody TrustlineResource trustlineResource) {
+        trustlineService.updateTrustlineInfo(trustlineResource);
+        return ResponseEntity.ok(ResourceResponseUtil.success());
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity getTrustline(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(trustlineService.getTrustlineResource(id));
+    }
+
     @GetMapping("/search")
     private ResponseEntity searchTrustline(@RequestParam("key") String key) {
         return ResponseEntity.ok(trustlineService.searchTrustline(key));

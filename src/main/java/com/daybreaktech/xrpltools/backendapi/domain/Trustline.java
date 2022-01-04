@@ -25,6 +25,7 @@ public class Trustline {
     private String limit;
 
     private String twitterUrl;
+    private String imageUrl;
     private String websiteUrl;
 
     private LocalDateTime dateAdded;

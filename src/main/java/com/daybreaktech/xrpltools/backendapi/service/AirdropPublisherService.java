@@ -63,6 +63,8 @@ public class AirdropPublisherService {
                 .limit(trustline != null ? trustline.getLimit() : null)
                 .twitterUrl(trustline != null ? trustline.getTwitterUrl() : null)
                 .websiteUrl(trustline != null ? trustline.getWebsiteUrl() : null)
+                .refsUrl(airdropSchedule.getRefsUrl())
+                .imageUrl(airdropSchedule.getUseTrustlineImg() ? airdropSchedule.getImageUrl() : trustline.getImageUrl())
                 .code(airdropSchedule.getCode())
                 .timezone("CST")
                 .snapshotDate(airdropSchedule.getSnapshotDate())

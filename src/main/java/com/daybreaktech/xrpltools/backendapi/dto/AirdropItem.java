@@ -32,4 +32,7 @@ public class AirdropItem {
     private Integer order;
     private List<String> tags;
 
+    private String refsUrl;
+    private String imageUrl;
+
 }

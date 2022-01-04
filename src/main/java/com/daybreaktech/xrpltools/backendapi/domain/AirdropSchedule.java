@@ -37,4 +37,8 @@ public class AirdropSchedule {
     @OneToOne(mappedBy = "airdropSchedule", cascade = CascadeType.REMOVE)
     private ScheduleCategory scheduleCategory;
 
+    private String refsUrl;
+    private String imageUrl;
+    private Boolean useTrustlineImg;
+
 }

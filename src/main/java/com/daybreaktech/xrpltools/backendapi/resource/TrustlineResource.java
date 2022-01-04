@@ -16,6 +16,7 @@ public class TrustlineResource {
     private String currencyCode;
     private String limit;
     private String twitterUrl;
+    private String imageUrl;
     private String website;
     private LocalDateTime dateAdded;
 

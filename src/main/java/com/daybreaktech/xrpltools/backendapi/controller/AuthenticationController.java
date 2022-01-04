@@ -35,12 +35,6 @@ public class AuthenticationController {
 
     @PostMapping("/login/")
     private ResponseEntity login(@RequestBody LoginResource loginResource) throws XrplToolsException {
-
-        String encodedPassword = passwordEncoder.encode(loginResource.getPassword());
-        String password = loginResource.getPassword();
-
-        logger.info("PASSWORD = " + password + " ENCONDED = " + encodedPassword);
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginResource.getUsername(), loginResource.getPassword()));
 
