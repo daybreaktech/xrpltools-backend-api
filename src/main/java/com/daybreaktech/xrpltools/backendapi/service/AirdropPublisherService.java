@@ -6,6 +6,8 @@ import com.daybreaktech.xrpltools.backendapi.domain.ScheduleCategory;
 import com.daybreaktech.xrpltools.backendapi.domain.Trustline;
 import com.daybreaktech.xrpltools.backendapi.dto.AirdropBody;
 import com.daybreaktech.xrpltools.backendapi.dto.AirdropItem;
+import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
+import com.daybreaktech.xrpltools.backendapi.repository.AirdropScheduleRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.ScheduleCategoryRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class AirdropPublisherService {
 
     @Autowired
     private ScheduleCategoryRepository categoryRepository;
+
+    @Autowired
+    private AirdropScheduleRepository airdropScheduleRepository;
 
     public void generateAndSave() throws JsonProcessingException {
         Map<String, List<AirdropItem>> stringListMap = new HashMap<>();
@@ -32,6 +37,16 @@ public class AirdropPublisherService {
         AirdropBody airdropBody = AirdropBody.builder()
                 .items(stringListMap)
                 .build();
+    }
+
+    public AirdropItem findByCode(String code) throws XrplToolsException {
+        AirdropSchedule airdropSchedule = airdropScheduleRepository.findByCode(code);
+
+        if (airdropSchedule == null) {
+            throw new XrplToolsException(404, "Airdrop Schedule code does not exist");
+        } else {
+            return airdropItemSolo(airdropSchedule);
+        }
     }
 
     public AirdropBody getOrderedSchedules() {
@@ -51,6 +66,31 @@ public class AirdropPublisherService {
         return airdropBody;
     }
 
+    private AirdropItem airdropItemSolo(AirdropSchedule airdropSchedule) {
+        Trustline trustline = airdropSchedule.getTrustline();
+
+        AirdropItem airdropItem = AirdropItem.builder()
+                .id(airdropSchedule.getId())
+                .tokenName(trustline != null ? trustline.getName() : null)
+                .issuerAddress(trustline != null ? trustline.getIssuerAddress() : null)
+                .currencyCode(trustline != null ? trustline.getCurrencyCode() : null)
+                .limit(trustline != null ? trustline.getLimit() : null)
+                .twitterUrl(trustline != null ? trustline.getTwitterUrl() : null)
+                .websiteUrl(trustline != null ? trustline.getWebsiteUrl() : null)
+                .refsUrl(airdropSchedule.getRefsUrl())
+                .imageUrl(getImageUrl(airdropSchedule, trustline))
+                .code(airdropSchedule.getCode())
+                .timezone("CST")
+                .snapshotDate(airdropSchedule.getSnapshotDate())
+                .airdropDate(airdropSchedule.getAirdropDate())
+                .shortDesc(airdropSchedule.getShortDesc())
+                .longDesc(airdropSchedule.getLongDesc())
+                .tags(tagSplitter(airdropSchedule.getTags()))
+                .build();
+
+        return airdropItem;
+    }
+
     private AirdropItem airdropItem(ScheduleCategory scheduleCategory) {
         AirdropSchedule airdropSchedule = scheduleCategory.getAirdropSchedule();
         Trustline trustline = airdropSchedule.getTrustline();
@@ -64,7 +104,7 @@ public class AirdropPublisherService {
                 .twitterUrl(trustline != null ? trustline.getTwitterUrl() : null)
                 .websiteUrl(trustline != null ? trustline.getWebsiteUrl() : null)
                 .refsUrl(airdropSchedule.getRefsUrl())
-                .imageUrl(airdropSchedule.getUseTrustlineImg() ? airdropSchedule.getImageUrl() : trustline.getImageUrl())
+                .imageUrl(getImageUrl(airdropSchedule, trustline))
                 .code(airdropSchedule.getCode())
                 .timezone("CST")
                 .snapshotDate(airdropSchedule.getSnapshotDate())
@@ -76,6 +116,16 @@ public class AirdropPublisherService {
                 .build();
 
         return airdropItem;
+    }
+
+    private String getImageUrl(AirdropSchedule airdropSchedule, Trustline trustline) {
+        if (airdropSchedule.getUseTrustlineImg() != null && airdropSchedule.getUseTrustlineImg() == true) {
+            if (trustline != null && trustline.getImageUrl() != null && trustline.getImageUrl() != "") {
+                return trustline.getImageUrl();
+            }
+        }
+
+        return airdropSchedule.getImageUrl();
     }
 
     private List<String> tagSplitter(String tags) {

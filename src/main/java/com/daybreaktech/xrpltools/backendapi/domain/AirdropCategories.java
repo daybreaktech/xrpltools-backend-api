@@ -5,6 +5,8 @@ public enum AirdropCategories {
     FEATURED,
     CONTINUES,
     FAUCETS,
-    UPCOMING
+    UPCOMING,
+    MISC,
+    HOLDERS
 
 }

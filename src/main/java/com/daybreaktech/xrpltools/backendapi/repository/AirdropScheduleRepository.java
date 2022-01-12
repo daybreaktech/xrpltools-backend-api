@@ -1,12 +1,14 @@
 package com.daybreaktech.xrpltools.backendapi.repository;
 
 import com.daybreaktech.xrpltools.backendapi.domain.AirdropSchedule;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+@EnableCaching
 public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedule, Long> {
 
     @Query("select a from AirdropSchedule a where a.code =:code")

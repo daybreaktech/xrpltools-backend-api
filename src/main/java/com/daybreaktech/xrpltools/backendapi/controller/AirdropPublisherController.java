@@ -1,5 +1,6 @@
 package com.daybreaktech.xrpltools.backendapi.controller;
 
+import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
 import com.daybreaktech.xrpltools.backendapi.service.AirdropPublisherService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class AirdropPublisherController {
     @GetMapping("/")
     public ResponseEntity getOrderedSchedules() throws JsonProcessingException {
         return ResponseEntity.ok(airdropPublisherService.getOrderedSchedules());
+    }
+
+    @GetMapping("/{code}")
+    public ResponseEntity getScheduleByCode(@PathVariable("code") String code) throws XrplToolsException {
+        return ResponseEntity.ok(airdropPublisherService.findByCode(code));
     }
 
 }
