@@ -52,11 +52,13 @@ public class AirdropPublisherService {
     public AirdropBody getOrderedSchedules() {
         Map<String, List<AirdropItem>> stringListMap = new HashMap<>();
         for (AirdropCategories categories: AirdropCategories.values()) {
-            List<AirdropItem> airdropItems = new ArrayList<>();
-            List<ScheduleCategory> categoryList = categoryRepository.findByCategory(categories);
-            categoryList.stream().map(scheduleCategory -> airdropItem(scheduleCategory))
-                    .forEach(airdropItems::add);
-            stringListMap.put(categories.name(), airdropItems);
+            if (!categories.isHidden()) {
+                List<AirdropItem> airdropItems = new ArrayList<>();
+                List<ScheduleCategory> categoryList = categoryRepository.findByCategory(categories);
+                categoryList.stream().map(scheduleCategory -> airdropItem(scheduleCategory))
+                        .forEach(airdropItems::add);
+                stringListMap.put(categories.name(), airdropItems);
+            }
         }
 
         AirdropBody airdropBody = AirdropBody.builder()
