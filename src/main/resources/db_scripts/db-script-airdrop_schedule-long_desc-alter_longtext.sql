@@ -1,0 +1,1 @@
+ALTER TABLE `airdrop_schedules` MODIFY `long_desc` LONGTEXT;

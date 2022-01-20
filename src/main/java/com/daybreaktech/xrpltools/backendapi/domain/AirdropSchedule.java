@@ -18,7 +18,10 @@ public class AirdropSchedule {
     private Long id;
     private String code;
     private String shortDesc;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String longDesc;
+
     private LocalDateTime snapshotDate;
     private LocalDateTime airdropDate;
     private String timeZone;
