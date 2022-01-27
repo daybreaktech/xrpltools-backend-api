@@ -1,9 +1,7 @@
 package com.daybreaktech.xrpltools.backendapi.service;
 
-import com.daybreaktech.xrpltools.backendapi.domain.AirdropSchedule;
-import com.daybreaktech.xrpltools.backendapi.domain.ScheduleCategory;
-import com.daybreaktech.xrpltools.backendapi.domain.Status;
-import com.daybreaktech.xrpltools.backendapi.domain.Trustline;
+import com.daybreaktech.xrpltools.backendapi.domain.*;
+import com.daybreaktech.xrpltools.backendapi.dto.AirdropItem;
 import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
 import com.daybreaktech.xrpltools.backendapi.repository.AirdropScheduleRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.ScheduleCategoryRepository;
@@ -35,6 +33,26 @@ public class AirdropScheduleService {
 
     public List<Long> getAllAirdropIds() {
         return airdropScheduleRepository.findByIds();
+    }
+
+
+    public AirdropScheduleResource findByCode(String code) throws XrplToolsException {
+        AirdropSchedule airdropSchedule = airdropScheduleRepository.findByCode(code);
+
+        if (airdropSchedule == null) {
+            throw new XrplToolsException(404, "Airdrop Schedule code does not exist");
+        } else {
+            return convertToResource(airdropSchedule);
+        }
+    }
+
+    public List<AirdropScheduleResource> getFeaturedAirdrops() {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+        List<ScheduleCategory> categoryList = scheduleCategoryRepository.findByCategory(AirdropCategories.FEATURED);
+
+        categoryList.stream().map(category -> convertToResource(category.getAirdropSchedule()))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
     }
 
     public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
@@ -194,7 +212,18 @@ public class AirdropScheduleService {
                 .useTrustlineImg(airdropSchedule.getUseTrustlineImg())
                 .tags(putAsTagsWithNew(tags, airdropSchedule.getDateAdded()))
                 .trustline(convertToResource(airdropSchedule.getTrustline()))
+                .useTrustlineImg(airdropSchedule.getUseTrustlineImg())
                 .build();
+    }
+
+    private String getImageUrl(AirdropSchedule airdropSchedule, Trustline trustline) {
+        if (airdropSchedule.getUseTrustlineImg() != null && airdropSchedule.getUseTrustlineImg() == true) {
+            if (trustline != null && trustline.getImageUrl() != null && trustline.getImageUrl() != "") {
+                return trustline.getImageUrl();
+            }
+        }
+
+        return airdropSchedule.getImageUrl();
     }
 
     private List<String> putAsTagsWithNew(List<String> tags, LocalDateTime dateAdded) {
@@ -231,6 +260,11 @@ public class AirdropScheduleService {
             return TrustlineResource.builder()
                     .id(trustline.getId())
                     .name(trustline.getName())
+                    .issuerAddress(trustline.getIssuerAddress())
+                    .currencyCode(trustline.getCurrencyCode())
+                    .limit(trustline.getLimit())
+                    .twitterUrl(trustline.getTwitterUrl())
+                    .imageUrl(trustline.getImageUrl())
                     .build();
         }
     }

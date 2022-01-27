@@ -37,7 +37,7 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
     @Query("select a from AirdropSchedule a order by a.id desc")
     List<AirdropSchedule> findOrderById();
 
-    @Query("select a from AirdropSchedule a order by a.airdropDate desc")
+    @Query("select a from AirdropSchedule a order by a.airdropDate asc nulls last")
     List<AirdropSchedule> findByAirdropDate();
 
     @Query("select a from AirdropSchedule a where lower(a.tags) like lower(concat('%', :tag,'%'))  order by a.id desc")
@@ -46,7 +46,7 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
     @Query("select a.id from AirdropSchedule a")
     List<Long> findByIds();
 
-    @Query("select a from AirdropSchedule a where a.dateAdded >= :pastDate order by a.dateAdded desc")
+    @Query("select a from AirdropSchedule a where a.dateAdded >= :pastDate and a.dateAdded is not null order by a.dateAdded asc")
     List<AirdropSchedule> findByDateAddedForPastDays(@Param("pastDate") LocalDateTime pastDate);
 
 }

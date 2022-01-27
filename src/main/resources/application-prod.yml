@@ -17,6 +17,7 @@ spring:
     show-sql: false
 
 web-ui: https://xrpltoolsadmin.github.io/
+web-ui-test: https://xrpltoolstest.github.io/
 web-ui-main: https://xrpltools.com/
 
 

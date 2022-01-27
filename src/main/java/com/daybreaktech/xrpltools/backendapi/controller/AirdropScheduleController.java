@@ -64,24 +64,4 @@ public class AirdropScheduleController {
         return ResponseEntity.ok(ResourceResponseUtil.success());
     }
 
-    @GetMapping("/published/ids")
-    public ResponseEntity getAllAirdropIds() {
-        return ResponseEntity.ok(airdropScheduleService.getAllAirdropIds());
-    }
-
-    @GetMapping("/published/calendar/airdrop")
-    public ResponseEntity getAirdropsByAirdropDate() {
-        return ResponseEntity.ok(airdropScheduleService.getAllAirdropsByAirdropDate());
-    }
-
-    @GetMapping("/published/tag/{tag}")
-    public ResponseEntity getAirdropsByTag(@PathVariable("tag") String tag) {
-        return ResponseEntity.ok(airdropScheduleService.getAirdropsByTag(tag));
-    }
-
-    @GetMapping("/published/calendar/added")
-    public ResponseEntity getRecentlyAdded(@RequestParam(name = "days", required = true) Integer days) {
-        return ResponseEntity.ok(airdropScheduleService.getAirdropsFromPastDays(days));
-    }
-
 }
