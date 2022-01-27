@@ -1,1 +1,1 @@
-ALTER TABLE `airdrop_schedules` MODIFY `long_desc` LONGTEXT;
+ALTER TABLE [dbo].[airdrop_schedules] ALTER COLUMN long_desc VARCHAR (1000);

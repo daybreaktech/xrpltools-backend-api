@@ -12,10 +12,14 @@ import com.daybreaktech.xrpltools.backendapi.resource.TrustlineResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Service
 public class AirdropScheduleService {
@@ -28,6 +32,38 @@ public class AirdropScheduleService {
 
     @Autowired
     private TrustlineService trustlineService;
+
+    public List<Long> getAllAirdropIds() {
+        return airdropScheduleRepository.findByIds();
+    }
+
+    public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate();
+        airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
+    }
+
+    public List<AirdropScheduleResource> getAirdropsFromPastDays(Integer days) {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+
+        LocalDateTime last7Days = LocalDateTime.now().minusDays(days);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByDateAddedForPastDays(last7Days);
+        airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
+    }
+
+    public List<AirdropScheduleResource> getAirdropsByTag(String tag) {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByTag(tag);
+        airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
+    }
 
     public List<AirdropScheduleResource> getUnassignedCategoryAirdrops() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
@@ -123,7 +159,9 @@ public class AirdropScheduleService {
                 .status(Status.valueOf(airdropScheduleResource.getStatus()))
                 .trustline(trustline)
                 .tags(tags)
+                .dateAdded(airdropScheduleResource.getDateAdded())
                 .refsUrl(airdropScheduleResource.getRefsUrl())
+                .formUrl(airdropScheduleResource.getFormUrl())
                 .imageUrl(airdropScheduleResource.getImageUrl())
                 .useTrustlineImg(airdropScheduleResource.getUseTrustlineImg())
                 .build();
@@ -148,13 +186,42 @@ public class AirdropScheduleService {
                 .timeZone(airdropSchedule.getTimeZone())
                 .airdropDate(airdropSchedule.getAirdropDate())
                 .status(airdropSchedule.getStatus().name())
+                .dateAdded(airdropSchedule.getDateAdded())
                 .category(categoryName)
                 .refsUrl(airdropSchedule.getRefsUrl())
+                .formUrl(airdropSchedule.getFormUrl())
                 .imageUrl(airdropSchedule.getImageUrl())
                 .useTrustlineImg(airdropSchedule.getUseTrustlineImg())
-                .tags(tags)
+                .tags(putAsTagsWithNew(tags, airdropSchedule.getDateAdded()))
                 .trustline(convertToResource(airdropSchedule.getTrustline()))
                 .build();
+    }
+
+    private List<String> putAsTagsWithNew(List<String> tags, LocalDateTime dateAdded) {
+        List<String> newTags = new ArrayList<>();
+        List<String> strippedOffTags = tags != null && !tags.isEmpty() ?
+                tags.stream().filter(tag -> !"new".equals(tag.toLowerCase(Locale.ROOT))).collect(Collectors.toList()) : null;
+
+        if (dateAdded == null) {
+            return strippedOffTags;
+        } else {
+            if (validateAirdropIfPastSevenDays(dateAdded)) {
+                newTags.add("NEW");
+
+                if (strippedOffTags != null && !strippedOffTags.isEmpty()) {
+                    newTags.addAll(strippedOffTags);
+                }
+                return newTags;
+            }
+            else {
+                return strippedOffTags;
+            }
+        }
+    }
+
+    private boolean validateAirdropIfPastSevenDays(LocalDateTime dateAdded) {
+        long daysBetween = DAYS.between(dateAdded, LocalDateTime.now());
+        return daysBetween <= 7;
     }
 
     private TrustlineResource convertToResource(Trustline trustline) {

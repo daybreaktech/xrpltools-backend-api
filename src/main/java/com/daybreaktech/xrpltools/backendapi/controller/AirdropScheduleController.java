@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping("${v1API}/airdrop/schedules")
 @CrossOrigin("${web-ui}")
@@ -48,11 +50,11 @@ public class AirdropScheduleController {
         return ResponseEntity.ok(airdropScheduleService.searchAirdropSchedule(key));
     }
 
-
     @PutMapping("/")
     public ResponseEntity updateSchedule(@RequestBody AirdropScheduleResource airdropScheduleResource)
             throws XrplToolsException {
         airdropScheduleService.createAirdropSchedule(airdropScheduleResource);
+
         return ResponseEntity.ok(ResourceResponseUtil.success());
     }
 
@@ -60,6 +62,26 @@ public class AirdropScheduleController {
     public ResponseEntity deleteSchedule(@PathVariable("id") Long id) {
         airdropScheduleService.removeAirdropSchedule(id);
         return ResponseEntity.ok(ResourceResponseUtil.success());
+    }
+
+    @GetMapping("/published/ids")
+    public ResponseEntity getAllAirdropIds() {
+        return ResponseEntity.ok(airdropScheduleService.getAllAirdropIds());
+    }
+
+    @GetMapping("/published/calendar/airdrop")
+    public ResponseEntity getAirdropsByAirdropDate() {
+        return ResponseEntity.ok(airdropScheduleService.getAllAirdropsByAirdropDate());
+    }
+
+    @GetMapping("/published/tag/{tag}")
+    public ResponseEntity getAirdropsByTag(@PathVariable("tag") String tag) {
+        return ResponseEntity.ok(airdropScheduleService.getAirdropsByTag(tag));
+    }
+
+    @GetMapping("/published/calendar/added")
+    public ResponseEntity getRecentlyAdded(@RequestParam(name = "days", required = true) Integer days) {
+        return ResponseEntity.ok(airdropScheduleService.getAirdropsFromPastDays(days));
     }
 
 }

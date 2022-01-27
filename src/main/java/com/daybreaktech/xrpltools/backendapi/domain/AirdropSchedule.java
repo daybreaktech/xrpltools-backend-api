@@ -32,6 +32,8 @@ public class AirdropSchedule {
 
     private String tags;
 
+    private LocalDateTime dateAdded;
+
     @ManyToOne
     @JoinColumn(name = "trustline_id", nullable = true)
     private Trustline trustline;
@@ -41,6 +43,7 @@ public class AirdropSchedule {
     private ScheduleCategory scheduleCategory;
 
     private String refsUrl;
+    private String formUrl;
     private String imageUrl;
     private Boolean useTrustlineImg;
 

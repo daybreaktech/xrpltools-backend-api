@@ -18,7 +18,8 @@ public class ExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse> handleException(Exception e) throws XrplToolsException {
-        return ResponseEntity.ok(ResourceResponseUtil.error(500, e.getMessage()));
+        e.printStackTrace();
+        return ResponseEntity.ok(ResourceResponseUtil.error(500, e.toString()));
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EnableCaching
@@ -35,5 +36,17 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
 
     @Query("select a from AirdropSchedule a order by a.id desc")
     List<AirdropSchedule> findOrderById();
+
+    @Query("select a from AirdropSchedule a order by a.airdropDate desc")
+    List<AirdropSchedule> findByAirdropDate();
+
+    @Query("select a from AirdropSchedule a where lower(a.tags) like lower(concat('%', :tag,'%'))  order by a.id desc")
+    List<AirdropSchedule> findByTag(@Param("tag") String tag);
+
+    @Query("select a.id from AirdropSchedule a")
+    List<Long> findByIds();
+
+    @Query("select a from AirdropSchedule a where a.dateAdded >= :pastDate order by a.dateAdded desc")
+    List<AirdropSchedule> findByDateAddedForPastDays(@Param("pastDate") LocalDateTime pastDate);
 
 }

@@ -21,8 +21,10 @@ public class AirdropScheduleResource {
     private String status;
     private String category;
     private List<String> tags;
+    private LocalDateTime dateAdded;
     private TrustlineResource trustline;
     private String refsUrl;
+    private String formUrl;
     private String imageUrl;
     private Boolean useTrustlineImg;
 
