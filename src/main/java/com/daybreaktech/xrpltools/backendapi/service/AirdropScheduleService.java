@@ -31,8 +31,10 @@ public class AirdropScheduleService {
     @Autowired
     private TrustlineService trustlineService;
 
+    List<AirdropCategories> exculudedCategories = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH);
+
     public List<Long> getAllAirdropIds() {
-        return airdropScheduleRepository.findByIds();
+        return airdropScheduleRepository.findByIds(exculudedCategories);
     }
 
 
@@ -58,7 +60,7 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate();
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -68,7 +70,7 @@ public class AirdropScheduleService {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
         LocalDateTime last7Days = LocalDateTime.now().minusDays(days);
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByDateAddedForPastDays(last7Days);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByDateAddedForPastDays(last7Days, exculudedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -77,7 +79,7 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAirdropsByTag(String tag) {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByTag(tag);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByTag(tag, exculudedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
