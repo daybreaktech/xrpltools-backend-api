@@ -30,7 +30,12 @@ public class AirdropPublisherController {
     }
 
     @GetMapping("/{code}")
-    public ResponseEntity getScheduleByCode(@PathVariable("code") String code) throws XrplToolsException {
+    public ResponseEntity getScheduleByCodeOld(@PathVariable("code") String code) throws XrplToolsException {
+        return ResponseEntity.ok(airdropPublisherService.findByCode(code));
+    }
+
+    @GetMapping("/code/{code}")
+    public ResponseEntity getScheduleByCodeNew(@PathVariable("code") String code) throws XrplToolsException {
         return ResponseEntity.ok(airdropScheduleService.findByCode(code));
     }
 
