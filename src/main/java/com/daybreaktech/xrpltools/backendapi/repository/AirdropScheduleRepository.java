@@ -64,7 +64,7 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
             "where a.dateAdded >= :pastDate " +
             "and (s is null or s.category not in (:categories)) " +
             "and a.dateAdded is not null " +
-            "order by a.dateAdded asc")
+            "order by a.dateAdded desc")
     List<AirdropSchedule> findByDateAddedForPastDays(@Param("pastDate") LocalDateTime pastDate,
                                                      @Param("categories") List<AirdropCategories> categories);
 
