@@ -32,6 +32,7 @@ public class AirdropScheduleService {
     private TrustlineService trustlineService;
 
     List<AirdropCategories> exculudedCategories = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH);
+    List<AirdropCategories> exculudedCategoriesForAirdrops = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH, AirdropCategories.HOLDERS);
 
     public List<Long> getAllAirdropIds() {
         return airdropScheduleRepository.findByIds(exculudedCategories);
@@ -49,8 +50,16 @@ public class AirdropScheduleService {
     }
 
     public List<AirdropScheduleResource> getFeaturedAirdrops() {
+        return getCategorizedAirdrops(AirdropCategories.FEATURED);
+    }
+
+    public List<AirdropScheduleResource> getHoldersAirdrops() {
+        return getCategorizedAirdrops(AirdropCategories.HOLDERS);
+    }
+
+    public List<AirdropScheduleResource> getCategorizedAirdrops(AirdropCategories airdropCategories) {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
-        List<ScheduleCategory> categoryList = scheduleCategoryRepository.findByCategory(AirdropCategories.FEATURED);
+        List<ScheduleCategory> categoryList = scheduleCategoryRepository.findByCategory(airdropCategories);
 
         categoryList.stream().map(category -> convertToResource(category.getAirdropSchedule()))
                 .forEach(airdropScheduleResources::add);
@@ -60,7 +69,7 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategories);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategoriesForAirdrops);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;

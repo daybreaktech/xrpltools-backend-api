@@ -44,6 +44,11 @@ public class AirdropPublisherController {
         return ResponseEntity.ok(airdropScheduleService.getFeaturedAirdrops());
     }
 
+    @GetMapping("/holders")
+    public ResponseEntity getHolderAirdrops() {
+        return ResponseEntity.ok(airdropScheduleService.getHoldersAirdrops());
+    }
+
     @GetMapping("/calendar/airdrop")
     public ResponseEntity getAirdropsByAirdropDate() {
         return ResponseEntity.ok(airdropScheduleService.getAllAirdropsByAirdropDate());
