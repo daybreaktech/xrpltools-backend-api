@@ -10,6 +10,7 @@ import com.daybreaktech.xrpltools.backendapi.resource.TrustlineResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +70,7 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategoriesForAirdrops);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategoriesForAirdrops, LocalDateTime.now());
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
