@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class BackendApiApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("user.timezone", "America/Chicago");
 		SpringApplication.run(BackendApiApplication.class, args);
 	}
 

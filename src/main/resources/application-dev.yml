@@ -21,3 +21,7 @@ spring:
 web-ui: http://localhost:9527/
 web-ui-test: http://localhost:9528/
 web-ui-main: http://localhost:9528/
+
+web-push:
+  privateKey: BSjgeevmJB4iUTk9kCVF08GCfd452Oc7YnFOkR81TrI
+  publicKey: BKhNjcvSTGrFHiclLDXJm7ZZHb99wALefc2Ja1XlMuPYMSFjNaNgQAU-cowO7fAjikxAnqTR1R6PvC1p8J5cQ48
