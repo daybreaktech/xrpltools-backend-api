@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlserver://xrpltools-mssql-server.database.windows.net:1433;database=xrpltools-db;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    url: jdbc:sqlserver://xrpltools-mssql-server.database.windows.net:1433;database=xrpltools-db-test;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
     username: xrpltoolsdbuser
     password: Pass1word
   task:
@@ -16,8 +16,8 @@ spring:
       dialect: org.hibernate.dialect.SQLServer2012Dialect
     show-sql: false
 
-web-ui: https://xrpltoolsadmin.github.io/
-web-ui-main: https://xrpltools.com/
+web-ui: https://xrpltoolsadmintest.github.io/
+web-ui-main: https://xrpltoolstest.github.io/
 
 
 #spring:

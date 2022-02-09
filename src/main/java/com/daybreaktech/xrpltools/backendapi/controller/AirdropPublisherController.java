@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${v1API}/airdrop/publisher")
-@CrossOrigin({"${web-ui}", "${web-ui-main}", "${web-ui-test}"})
+@CrossOrigin({"${web-ui}", "${web-ui-main}"})
 public class AirdropPublisherController {
 
     @Autowired
