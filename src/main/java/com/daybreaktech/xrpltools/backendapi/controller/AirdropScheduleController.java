@@ -54,7 +54,6 @@ public class AirdropScheduleController {
     public ResponseEntity updateSchedule(@RequestBody AirdropScheduleResource airdropScheduleResource)
             throws XrplToolsException {
         airdropScheduleService.createAirdropSchedule(airdropScheduleResource);
-
         return ResponseEntity.ok(ResourceResponseUtil.success());
     }
 

@@ -430,7 +430,7 @@ public class AirdropScheduleService {
     }
 
     private String generateAirdropDetailsUrl(String airdropCode) {
-        return String.format("%sschedule?code=%s&route=airdrops", webUIUrl, airdropCode);
+        return String.format("%s#/schedule?code=%s&route=airdrops", webUIUrl, airdropCode);
     }
 
     private String generateBody(TrustlineResource trustlineResource, String mode, LocalDateTime date) {
@@ -466,7 +466,7 @@ public class AirdropScheduleService {
 
     private String generateDate(LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-        return date.format(formatter) + " CST";
+        return date.format(formatter);
     }
 
     private void processSendNotification(Object obj, List<PushNotificationSubscription> subscriptions) {

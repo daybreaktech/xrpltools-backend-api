@@ -1,5 +1,6 @@
 package com.daybreaktech.xrpltools.backendapi.controller;
 
+import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
 import com.daybreaktech.xrpltools.backendapi.helpers.ResourceResponseUtil;
 import com.daybreaktech.xrpltools.backendapi.resource.SubscriptionResource;
 import com.daybreaktech.xrpltools.backendapi.service.PushNotificationService;
@@ -18,6 +19,18 @@ public class PushNotificationController {
     @PostMapping("/")
     public ResponseEntity subscribe(@RequestBody SubscriptionResource subscriptionResource) {
         pushNotificationService.subscribe(subscriptionResource);
+        return ResponseEntity.ok(ResourceResponseUtil.success());
+    }
+
+    @PostMapping("/check")
+    public ResponseEntity checkSubscription(@RequestBody SubscriptionResource subscriptionResource) throws XrplToolsException {
+        pushNotificationService.checkSubscription(subscriptionResource);
+        return ResponseEntity.ok(ResourceResponseUtil.success());
+    }
+
+    @DeleteMapping("/")
+    public ResponseEntity unsubscribe(@RequestBody SubscriptionResource subscriptionResource) throws XrplToolsException {
+        pushNotificationService.removeSubscription(subscriptionResource);
         return ResponseEntity.ok(ResourceResponseUtil.success());
     }
 

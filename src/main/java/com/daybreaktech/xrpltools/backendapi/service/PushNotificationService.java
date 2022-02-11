@@ -2,6 +2,7 @@ package com.daybreaktech.xrpltools.backendapi.service;
 
 import com.daybreaktech.xrpltools.backendapi.domain.PushNotificationSubscription;
 import com.daybreaktech.xrpltools.backendapi.dto.NotificationMessage;
+import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
 import com.daybreaktech.xrpltools.backendapi.repository.PushNotificationSubscriptionRepository;
 import com.daybreaktech.xrpltools.backendapi.resource.PushNotificationScheduleResource;
 import com.daybreaktech.xrpltools.backendapi.resource.SubscriptionResource;
@@ -67,6 +68,23 @@ public class PushNotificationService {
                 .dateSubscribed(LocalDateTime.now())
                 .build();
         repository.save(pushNotificationSubscription);
+    }
+
+    public void checkSubscription(SubscriptionResource subscriptionResource) throws XrplToolsException {
+        PushNotificationSubscription check = repository.findCountByEndpoint(subscriptionResource.getEndpoint(),
+                subscriptionResource.getKeys().getP256dh(),
+                subscriptionResource.getKeys().getAuth());
+
+        if (check == null) {
+            throw new XrplToolsException(401, "Browser is not subscribed");
+        }
+    }
+
+    public void removeSubscription(SubscriptionResource subscriptionResource) {
+        PushNotificationSubscription subscription = repository.findCountByEndpoint(subscriptionResource.getEndpoint(),
+                subscriptionResource.getKeys().getP256dh(),
+                subscriptionResource.getKeys().getAuth());
+        repository.delete(subscription);
     }
 
     @Async("pushNotifAsyncExecutor")
