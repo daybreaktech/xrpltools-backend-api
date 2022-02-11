@@ -61,13 +61,20 @@ public class PushNotificationService {
     }
 
     public void subscribe(SubscriptionResource subscriptionResource) {
-        PushNotificationSubscription pushNotificationSubscription = PushNotificationSubscription.builder()
-                .endpoint(subscriptionResource.getEndpoint())
-                .p256dh(subscriptionResource.getKeys().getP256dh())
-                .auth(subscriptionResource.getKeys().getAuth())
-                .dateSubscribed(LocalDateTime.now())
-                .build();
-        repository.save(pushNotificationSubscription);
+        PushNotificationSubscription check = repository.findCountByEndpoint(subscriptionResource.getEndpoint(),
+                subscriptionResource.getKeys().getP256dh(),
+                subscriptionResource.getKeys().getAuth());
+
+        if (check == null) {
+            PushNotificationSubscription pushNotificationSubscription = PushNotificationSubscription.builder()
+                    .endpoint(subscriptionResource.getEndpoint())
+                    .p256dh(subscriptionResource.getKeys().getP256dh())
+                    .auth(subscriptionResource.getKeys().getAuth())
+                    .dateSubscribed(LocalDateTime.now())
+                    .build();
+            
+            repository.save(pushNotificationSubscription);
+        }
     }
 
     public void checkSubscription(SubscriptionResource subscriptionResource) throws XrplToolsException {
