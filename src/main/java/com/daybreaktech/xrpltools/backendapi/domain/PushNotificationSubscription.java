@@ -19,7 +19,7 @@ public class PushNotificationSubscription {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "VARCHAR(500)")
     private String endpoint;
     private String p256dh;
     private String auth;
