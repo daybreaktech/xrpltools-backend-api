@@ -19,6 +19,9 @@ spring:
 web-ui: https://xrpltoolsadmintest.github.io/
 web-ui-main: https://xrpltoolstest.github.io/
 
+web-push:
+  privateKey: 8r2KdeVetq01Ld0KknI_LBKtsmwO0q4b-XFzXxIqpZ0
+  publicKey: BGGqjHMHQhSmIkG9TKJWXsEWgwZDtQ6GyPBlucZs5IDrCIGcTw1vQjiO9KvYjeICpogvLj7C0jNYAQvRDJKR51Q
 
 #spring:
 #  datasource:

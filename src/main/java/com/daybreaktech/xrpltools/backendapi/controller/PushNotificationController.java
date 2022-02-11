@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("${v1API}/notifications")
-@CrossOrigin({"${web-ui}", "${web-ui-main}", "${web-ui-test}"})
+@CrossOrigin({"${web-ui}", "${web-ui-main}"})
 public class PushNotificationController {
 
     @Autowired

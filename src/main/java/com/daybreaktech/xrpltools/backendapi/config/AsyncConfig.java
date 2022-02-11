@@ -10,15 +10,29 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class AsyncConfig {
 
     @Bean(name = "pushNotifAsyncExecutor")
-    public ThreadPoolTaskExecutor asyncExecutorTrusts()
+    public ThreadPoolTaskExecutor asyncNotification()
     {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(20);
+        executor.setMaxPoolSize(20);
         executor.setQueueCapacity(1000);
+        executor.setThreadNamePrefix("AsyncThreadDelayedNotif-");
+        executor.initialize();
+        return executor;
+    }
+
+
+    @Bean(name = "asyncExecutor")
+    public ThreadPoolTaskExecutor asyncExecutor()
+    {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(100);
         executor.setThreadNamePrefix("AsyncThreadDelayed-");
         executor.initialize();
         return executor;
     }
+
 
 }

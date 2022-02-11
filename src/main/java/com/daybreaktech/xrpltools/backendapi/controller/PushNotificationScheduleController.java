@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("${v1API}/notifschedule")
-@CrossOrigin({"${web-ui}", "${web-ui-main}", "${web-ui-test}"})
+@CrossOrigin({"${web-ui}", "${web-ui-main}"})
 public class PushNotificationScheduleController {
 
     @Autowired

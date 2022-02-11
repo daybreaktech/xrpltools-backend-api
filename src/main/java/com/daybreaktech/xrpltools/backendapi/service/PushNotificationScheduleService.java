@@ -1,27 +1,41 @@
 package com.daybreaktech.xrpltools.backendapi.service;
 
-import com.daybreaktech.xrpltools.backendapi.domain.PushMode;
-import com.daybreaktech.xrpltools.backendapi.domain.PushNotificationSchedule;
-import com.daybreaktech.xrpltools.backendapi.domain.PushNotificationSubscription;
+import com.daybreaktech.xrpltools.backendapi.domain.*;
+import com.daybreaktech.xrpltools.backendapi.dto.NotificationDisplay;
 import com.daybreaktech.xrpltools.backendapi.repository.PushNotificationScheduleRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.PushNotificationSubscriptionRepository;
+import com.daybreaktech.xrpltools.backendapi.resource.AirdropScheduleResource;
 import com.daybreaktech.xrpltools.backendapi.resource.PushNotificationScheduleResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PushNotificationScheduleService {
+
+    Logger logger = LoggerFactory.getLogger(PushNotificationScheduleService.class);
 
     @Autowired
     private PushNotificationScheduleRepository pushNotificationScheduleRepository;
 
     @Autowired
     private PushNotificationSubscriptionRepository pushNotificationSubscriptionRepository;
+
+    @Lazy
+    @Autowired
+    private AirdropScheduleService airdropScheduleService;
+
+    @Value("${web-ui-main}")
+    private String webUIUrl;
 
     @Autowired
     private PushNotificationService pushNotificationService;
@@ -94,17 +108,18 @@ public class PushNotificationScheduleService {
                     = (List<PushNotificationSubscription>) pushNotificationSubscriptionRepository.findAll();
             pushNotificationSchedules.stream().forEach(pns -> {
                 PushNotificationSchedule processedPns = processPns(pns, subscriptions);
-
+                pushNotificationScheduleRepository.save(processedPns);
             });
+            logger.debug(String.format("Ended scheduleFixedDelayTask: executed %d notifications", subscriptions.size()));
         }
     }
 
     @Scheduled(fixedDelay = 20000)
-    public void scheduleFixedDelayTask() {
+    public void processPushNotificationSchedule() {
         try {
             findAndExecuteNotificationSchedules();
         } catch (Exception e) {
-            System.out.println(e.toString());
+            logger.error("Error findAndExecuteNotificationSchedules() " + e);
         }
     }
 

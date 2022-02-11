@@ -13,7 +13,7 @@ public interface PushNotificationScheduleRepository extends CrudRepository<PushN
     @Query("select pns from PushNotificationSchedule pns order by pns.targetDateTime desc")
     List<PushNotificationSchedule> findBySortedTargetDateTime();
 
-    @Query("select pns from PushNotificationSchedule pns where pns.targetDateTime < :dateTimeNow")
+    @Query("select pns from PushNotificationSchedule pns where pns.targetDateTime < :dateTimeNow and pns.isSent = false")
     List<PushNotificationSchedule> findSchedulesBelowThisTime(@Param("dateTimeNow") LocalDateTime dateTimeNow);
 
 }

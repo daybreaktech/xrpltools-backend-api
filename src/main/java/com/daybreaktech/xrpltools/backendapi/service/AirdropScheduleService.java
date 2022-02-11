@@ -2,16 +2,26 @@ package com.daybreaktech.xrpltools.backendapi.service;
 
 import com.daybreaktech.xrpltools.backendapi.domain.*;
 import com.daybreaktech.xrpltools.backendapi.dto.AirdropItem;
+import com.daybreaktech.xrpltools.backendapi.dto.NotificationDisplay;
 import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
+import com.daybreaktech.xrpltools.backendapi.repository.AirdropNotificationLogRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.AirdropScheduleRepository;
+import com.daybreaktech.xrpltools.backendapi.repository.PushNotificationSubscriptionRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.ScheduleCategoryRepository;
 import com.daybreaktech.xrpltools.backendapi.resource.AirdropScheduleResource;
 import com.daybreaktech.xrpltools.backendapi.resource.TrustlineResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +33,8 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Service
 public class AirdropScheduleService {
 
+    Logger logger = LoggerFactory.getLogger(AirdropScheduleService.class);
+
     @Autowired
     private AirdropScheduleRepository airdropScheduleRepository;
 
@@ -30,15 +42,59 @@ public class AirdropScheduleService {
     private ScheduleCategoryRepository scheduleCategoryRepository;
 
     @Autowired
+    private AirdropNotificationLogRepository airdropNotificationLogRepository;
+
+    @Autowired
+    private PushNotificationSubscriptionRepository pushNotificationSubscriptionRepository;
+
+    @Autowired
     private TrustlineService trustlineService;
+
+    @Autowired
+    private PushNotificationService pushNotificationService;
+
+    @Value("${web-ui-main}")
+    private String webUIUrl;
 
     List<AirdropCategories> exculudedCategories = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH);
     List<AirdropCategories> exculudedCategoriesForAirdrops = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH, AirdropCategories.HOLDERS);
+
+
+    public void logAirdropNotification(String airdropCode, AirdropNotificationType type) {
+        AirdropNotificationLog notificationLog = AirdropNotificationLog.builder()
+                .airdropCode(airdropCode)
+                .type(type)
+                .dateTimeSent(LocalDateTime.now())
+                .build();
+
+        airdropNotificationLogRepository.save(notificationLog);
+    }
 
     public List<Long> getAllAirdropIds() {
         return airdropScheduleRepository.findByIds(exculudedCategories);
     }
 
+    public Boolean isAirdropNotificationSentAlready(String airdropCode, AirdropNotificationType notificationType) {
+        Integer count = airdropNotificationLogRepository.findLogByAirdropCodeAndType(airdropCode, notificationType);
+        return count != null && count > 0;
+    }
+
+    public List<AirdropScheduleResource> getAirdropNotification(AirdropNotificationType notificationType) {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+        LocalDateTime start = LocalDateTime.now().minusMinutes(2);
+        LocalDateTime end = start.plusDays(2);
+        List<AirdropSchedule> airdropSchedules = null;
+
+        if (AirdropNotificationType.AIRDROP_TWO_DAYS_LEFT.equals(notificationType)) {
+            airdropSchedules = airdropScheduleRepository.findAirdropDatesBetweenDates(start, end, exculudedCategories);
+        } else {
+            airdropSchedules = airdropScheduleRepository.findSnapshotDatesBetweenDates(start, end, exculudedCategories);
+        }
+
+        airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
+    }
 
     public AirdropScheduleResource findByCode(String code) throws XrplToolsException {
         AirdropSchedule airdropSchedule = airdropScheduleRepository.findByCode(code);
@@ -138,6 +194,9 @@ public class AirdropScheduleService {
         AirdropSchedule airdropSchedule = convertToDomain(airdropScheduleResource);
         validateAirdropCode(airdropSchedule);
         AirdropSchedule newAirdropSchedule = airdropScheduleRepository.save(airdropSchedule);
+
+        sendNotificationForNewAirdrop(airdropScheduleResource);
+
         return newAirdropSchedule;
     }
 
@@ -279,6 +338,161 @@ public class AirdropScheduleService {
                     .twitterUrl(trustline.getTwitterUrl())
                     .imageUrl(trustline.getImageUrl())
                     .build();
+        }
+    }
+
+    /*Notifications*/
+    @Async("asyncExecutor")
+    private void sendNotificationForNewAirdrop(AirdropScheduleResource airdropScheduleResource) {
+        if (airdropScheduleResource.getId() == null) {
+            List<PushNotificationSubscription> subscriptions
+                    = (List<PushNotificationSubscription>) pushNotificationSubscriptionRepository.findAll();
+            decorateAndSendNotification(airdropScheduleResource, AirdropNotificationType.NEW_AIRDROP, subscriptions);
+            logAirdropNotification(airdropScheduleResource.getCode(), AirdropNotificationType.NEW_AIRDROP);
+        }
+    }
+
+    private void findExecuteAirdropSchedule(AirdropNotificationType type) {
+        List<AirdropScheduleResource> airdropScheduleResources = getAirdropNotification(type);
+
+        if (airdropScheduleResources != null && !airdropScheduleResources.isEmpty()) {
+            List<PushNotificationSubscription> subscriptions
+                    = (List<PushNotificationSubscription>) pushNotificationSubscriptionRepository.findAll();
+
+            List<AirdropScheduleResource> valids = airdropScheduleResources.stream().filter(resource -> {
+                return !isAirdropNotificationSentAlready(resource.getCode(), type);
+            }).collect(Collectors.toList());
+
+            processResourceForNotificationSend(valids, type, subscriptions);
+        }
+    }
+
+    private void processResourceForNotificationSend(List<AirdropScheduleResource> airdropScheduleResources,
+                                                    AirdropNotificationType type, List<PushNotificationSubscription> subscriptions) {
+        if (airdropScheduleResources != null && !airdropScheduleResources.isEmpty()) {
+            airdropScheduleResources.stream().forEach(resource -> {
+                try {
+                    decorateAndSendNotification(resource, type, subscriptions);
+                    logAirdropNotification(resource.getCode(), type);
+                } catch (Exception e) {
+                    logger.error(e.toString());
+                }
+            });
+        }
+    }
+
+    private void decorateAndSendNotification(AirdropScheduleResource resource, AirdropNotificationType type,
+                                             List<PushNotificationSubscription> subscriptions) {
+        NotificationDisplay notificationDisplay = null;
+
+        if (AirdropNotificationType.AIRDROP_TWO_DAYS_LEFT.equals(type)) {
+            notificationDisplay = decorateForAirdropDate(resource);
+        } else if (AirdropNotificationType.SNAPSHOT_TWO_DAYS_LEFT.equals(type)) {
+            notificationDisplay = decorateForSnapshotDate(resource);
+        } else {
+            notificationDisplay = decorateForNewAirdrop(resource);
+        }
+
+        processSendNotification(notificationDisplay, subscriptions);
+    }
+
+    private NotificationDisplay decorateForAirdropDate(AirdropScheduleResource resource) {
+        NotificationDisplay notificationDisplay = NotificationDisplay.builder()
+                .title(generateTitle(resource, "Airdrop Alert!"))
+                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getSnapshotDate()))
+                .iconUrl("images/xrp-airdrop-icon.png")
+                .actionButtonLabel("More Details")
+                .actionButtonLink(generateAirdropDetailsUrl(resource.getCode()))
+                .build();
+        return notificationDisplay;
+    }
+
+    private NotificationDisplay decorateForSnapshotDate(AirdropScheduleResource resource) {
+        NotificationDisplay notificationDisplay = NotificationDisplay.builder()
+                .title(generateTitle(resource, "Snapshot update!"))
+                .description(generateBody(resource.getTrustline(), "Snapshot", resource.getSnapshotDate()))
+                .iconUrl("images/xrp-airdrop-icon.png")
+                .actionButtonLabel("More Details")
+                .actionButtonLink(generateAirdropDetailsUrl(resource.getCode()))
+                .build();
+        return notificationDisplay;
+    }
+
+    private NotificationDisplay decorateForNewAirdrop(AirdropScheduleResource resource) {
+        NotificationDisplay notificationDisplay = NotificationDisplay.builder()
+                .title("New Airdrop Alert!")
+                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getSnapshotDate()))
+                .iconUrl("images/xrp-airdrop-icon.png")
+                .actionButtonLabel("More Details")
+                .actionButtonLink(generateAirdropDetailsUrl(resource.getCode()))
+                .build();
+        return notificationDisplay;
+    }
+
+    private String generateAirdropDetailsUrl(String airdropCode) {
+        return String.format("%sschedule?code=%s&route=airdrops", webUIUrl, airdropCode);
+    }
+
+    private String generateBody(TrustlineResource trustlineResource, String mode, LocalDateTime date) {
+        return String.format("%s %s scheduled to take place in %s",
+                generateTokenName(trustlineResource),
+                        mode, generateDate(date));
+    }
+
+    @Deprecated
+    private String getImageUrl(AirdropScheduleResource resource) {
+        if (resource.getUseTrustlineImg() != null && resource.getUseTrustlineImg()) {
+
+            if (resource.getTrustline() != null && resource.getTrustline().getImageUrl()
+                    != null && resource.getTrustline().getImageUrl() != "") {
+                return resource.getTrustline().getImageUrl();
+            }
+        }
+
+        return resource.getImageUrl();
+    }
+
+    private String generateTitle(AirdropScheduleResource resource, String titlePrefix) {
+        return String.format("%s %s", generateTokenName(resource.getTrustline()), titlePrefix);
+    }
+
+    private String generateTokenName(TrustlineResource trustlineResource) {
+        if (trustlineResource != null) {
+            return trustlineResource.getName();
+        } else {
+            return "[No-Token]";
+        }
+    }
+
+    private String generateDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+        return date.format(formatter) + " CST";
+    }
+
+    private void processSendNotification(Object obj, List<PushNotificationSubscription> subscriptions) {
+        if (subscriptions != null && !subscriptions.isEmpty()) {
+
+            subscriptions.forEach(sub -> {
+                pushNotificationService.sendNotificationFromSubs(sub, obj);
+            });
+        }
+    }
+
+    @Scheduled(fixedDelay = 600000)
+    public void processAutoSendNotificationAirdropDate() {
+        try {
+            findExecuteAirdropSchedule(AirdropNotificationType.AIRDROP_TWO_DAYS_LEFT);
+        } catch (Exception e) {
+            logger.error("Error processAutoSendNotificationAirdropDate() " + e);
+        }
+    }
+
+    @Scheduled(fixedDelay = 600000)
+    public void processAutoSendNotificationSnapshotDateDate() {
+        try {
+            findExecuteAirdropSchedule(AirdropNotificationType.SNAPSHOT_TWO_DAYS_LEFT);
+        } catch (Exception e) {
+            logger.error("Error processAutoSendNotificationSnapshotDateDate() " + e);
         }
     }
 

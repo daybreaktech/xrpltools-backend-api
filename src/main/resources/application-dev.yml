@@ -19,7 +19,6 @@ spring:
     database: mysql
 
 web-ui: http://localhost:9527/
-web-ui-test: http://localhost:9528/
 web-ui-main: http://localhost:9528/
 
 web-push:

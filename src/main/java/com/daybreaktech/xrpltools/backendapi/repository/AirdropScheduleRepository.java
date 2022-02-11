@@ -71,4 +71,21 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
     List<AirdropSchedule> findByDateAddedForPastDays(@Param("pastDate") LocalDateTime pastDate,
                                                      @Param("categories") List<AirdropCategories> categories);
 
+    /*For Notifications*/
+    @Query("select a from AirdropSchedule a " +
+            "left join a.scheduleCategory s " +
+            "where (a.airdropDate between :startDate and :endDate) " +
+            "and (s is null or s.category not in (:categories))")
+    List<AirdropSchedule> findAirdropDatesBetweenDates(@Param("startDate") LocalDateTime startDate,
+                                                       @Param("endDate") LocalDateTime endDate,
+                                                       @Param("categories") List<AirdropCategories> categories);
+
+    @Query("select a from AirdropSchedule a " +
+            "left join a.scheduleCategory s " +
+            "where (a.snapshotDate between :startDate and :endDate) " +
+            "and (s is null or s.category not in (:categories))")
+    List<AirdropSchedule> findSnapshotDatesBetweenDates(@Param("startDate") LocalDateTime startDate,
+                                                       @Param("endDate") LocalDateTime endDate,
+                                                       @Param("categories") List<AirdropCategories> categories);
+
 }
