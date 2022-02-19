@@ -8,14 +8,18 @@
 		<version>2.6.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.daybreaktech.xrpltools</groupId>
 	<artifactId>backend-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>backend-api</name>
 	<description>Backend API for XRPL Tools application</description>
+
 	<properties>
 		<java.version>8</java.version>
+		<spring-boot.run.jvmArguments>-Duser.timezone=CST</spring-boot.run.jvmArguments>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
