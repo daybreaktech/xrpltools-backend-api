@@ -30,6 +30,8 @@ public class Trustline {
 
     private LocalDateTime dateAdded;
 
+    private Boolean isScam;
+
     @Lazy
     @OneToMany(mappedBy="trustline")
     private List<AirdropSchedule> airdropSchedules;

@@ -359,6 +359,7 @@ public class AirdropScheduleService {
                     .limit(trustline.getLimit())
                     .twitterUrl(trustline.getTwitterUrl())
                     .imageUrl(trustline.getImageUrl())
+                    .isScam(trustline.getIsScam())
                     .build();
         }
     }

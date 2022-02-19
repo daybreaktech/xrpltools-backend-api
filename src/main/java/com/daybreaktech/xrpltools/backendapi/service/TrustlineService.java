@@ -26,6 +26,7 @@ public class TrustlineService {
         Trustline trustline = trustlineRepository.findById(trustlineResource.getId()).get();
         trustline.setTwitterUrl(trustlineResource.getTwitterUrl());
         trustline.setImageUrl(trustlineResource.getImageUrl());
+        trustline.setIsScam(trustlineResource.getIsScam());
         trustlineRepository.save(trustline);
     }
 
@@ -53,6 +54,7 @@ public class TrustlineService {
                 .imageUrl(trustline.getImageUrl())
                 .twitterUrl(trustline.getTwitterUrl())
                 .website(trustline.getWebsiteUrl())
+                .isScam(trustline.getIsScam())
                 .dateAdded(trustline.getDateAdded())
                 .build();
     }
@@ -73,6 +75,7 @@ public class TrustlineService {
                 .twitterUrl(trustlineResource.getTwitterUrl())
                 .imageUrl(trustlineResource.getImageUrl())
                 .websiteUrl(trustlineResource.getWebsite())
+                .isScam(trustlineResource.getIsScam())
                 .dateAdded(LocalDateTime.now())
                 .build();
 

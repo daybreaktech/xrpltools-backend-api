@@ -19,5 +19,6 @@ public class TrustlineResource {
     private String imageUrl;
     private String website;
     private LocalDateTime dateAdded;
+    private Boolean isScam;
 
 }
