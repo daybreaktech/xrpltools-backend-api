@@ -44,9 +44,9 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
     @Query("select a from AirdropSchedule a " +
             "left join a.scheduleCategory s " +
             "where (s is null or s.category not in (:categories)) " +
-            "and a.airdropDate is not null " +
-            "and a.airdropDate >= :today " +
-            "order by a.airdropDate asc")
+            "and (a.airdropDate >= :today or a.airdropDate is null)" +
+            "order by a.airdropDate asc " +
+            "nulls last")
     List<AirdropSchedule> findByAirdropDate(@Param("categories") List<AirdropCategories> categories, LocalDateTime today);
 
     @Query("select a from AirdropSchedule a " +

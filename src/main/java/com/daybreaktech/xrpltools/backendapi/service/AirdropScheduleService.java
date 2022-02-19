@@ -56,8 +56,8 @@ public class AirdropScheduleService {
     @Value("${web-ui-main}")
     private String webUIUrl;
 
-    List<AirdropCategories> exculudedCategories = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH);
-    List<AirdropCategories> exculudedCategoriesForAirdrops = Arrays.asList(AirdropCategories.ARCHIVE, AirdropCategories.TRASH, AirdropCategories.HOLDERS);
+    List<AirdropCategories> excludedCategories = Arrays.asList(AirdropCategories.TRASH);
+    List<AirdropCategories> excludedCategoriesForAirdrops = Arrays.asList(AirdropCategories.TRASH, AirdropCategories.HOLDERS);
 
 
     public void logAirdropNotification(String airdropCode, AirdropNotificationType type) {
@@ -71,7 +71,7 @@ public class AirdropScheduleService {
     }
 
     public List<Long> getAllAirdropIds() {
-        return airdropScheduleRepository.findByIds(exculudedCategories);
+        return airdropScheduleRepository.findByIds(excludedCategories);
     }
 
     public Boolean isAirdropNotificationSentAlready(String airdropCode, AirdropNotificationType notificationType) {
@@ -86,9 +86,9 @@ public class AirdropScheduleService {
         List<AirdropSchedule> airdropSchedules = null;
 
         if (AirdropNotificationType.AIRDROP_TWO_DAYS_LEFT.equals(notificationType)) {
-            airdropSchedules = airdropScheduleRepository.findAirdropDatesBetweenDates(start, end, exculudedCategories);
+            airdropSchedules = airdropScheduleRepository.findAirdropDatesBetweenDates(start, end, excludedCategories);
         } else {
-            airdropSchedules = airdropScheduleRepository.findSnapshotDatesBetweenDates(start, end, exculudedCategories);
+            airdropSchedules = airdropScheduleRepository.findSnapshotDatesBetweenDates(start, end, excludedCategories);
         }
 
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
@@ -127,7 +127,7 @@ public class AirdropScheduleService {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
         LocalDateTime maxTime = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0);
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(exculudedCategoriesForAirdrops, maxTime);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(excludedCategoriesForAirdrops, maxTime);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -137,7 +137,7 @@ public class AirdropScheduleService {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
         LocalDateTime last7Days = LocalDateTime.now().minusDays(days).withHour(0).withMinute(0).withSecond(0);;
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByDateAddedForPastDays(last7Days, exculudedCategories);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByDateAddedForPastDays(last7Days, excludedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -146,7 +146,7 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAirdropsByTag(String tag) {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByTag(tag, exculudedCategories);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByTag(tag, excludedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
