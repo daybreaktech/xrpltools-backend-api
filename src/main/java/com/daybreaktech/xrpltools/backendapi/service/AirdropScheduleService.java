@@ -114,6 +114,10 @@ public class AirdropScheduleService {
         return getCategorizedAirdrops(AirdropCategories.HOLDERS);
     }
 
+    public List<AirdropScheduleResource> getFaucetsAirdrops() {
+        return getCategorizedAirdrops(AirdropCategories.FAUCETS);
+    }
+
     public List<AirdropScheduleResource> getCategorizedAirdrops(AirdropCategories airdropCategories) {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
         List<ScheduleCategory> categoryList = scheduleCategoryRepository.findByCategory(airdropCategories);
@@ -125,9 +129,18 @@ public class AirdropScheduleService {
 
     public List<AirdropScheduleResource> getAllAirdropsByAirdropDate() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
-        LocalDateTime maxTime = LocalDateTime.now().minusDays(1).withHour(0).withMinute(0).withSecond(0);
+        LocalDateTime maxTime = LocalDateTime.now().minusDays(1);
 
         List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(excludedCategoriesForAirdrops, maxTime);
+        airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
+                .forEach(airdropScheduleResources::add);
+        return airdropScheduleResources;
+    }
+
+    public List<AirdropScheduleResource> getAllExpiredAirdrops() {
+        List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
+
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByExpiredAirdropDate(excludedCategories, LocalDateTime.now());
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -285,7 +298,16 @@ public class AirdropScheduleService {
                 .tags(putAsTagsWithNew(tags, airdropSchedule.getDateAdded()))
                 .trustline(convertToResource(airdropSchedule.getTrustline()))
                 .useTrustlineImg(airdropSchedule.getUseTrustlineImg())
+                .isAirdropExpired(validateExpiredAirdrop(airdropSchedule.getAirdropDate()))
+                .isSnapshotExpired(validateExpiredAirdrop(airdropSchedule.getSnapshotDate()))
                 .build();
+    }
+
+    private Boolean validateExpiredAirdrop(LocalDateTime date) {
+        if (date != null) {
+            return LocalDateTime.now().isAfter(date);
+        }
+        return false;
     }
 
     private String getImageUrl(AirdropSchedule airdropSchedule, Trustline trustline) {

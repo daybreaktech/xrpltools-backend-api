@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,6 +47,14 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
             "order by a.airdropDate asc " +
             "nulls last")
     List<AirdropSchedule> findByAirdropDate(@Param("categories") List<AirdropCategories> categories, LocalDateTime today);
+
+    @Query("select a from AirdropSchedule a " +
+            "left join a.scheduleCategory s " +
+            "where (s is null or s.category not in (:categories)) " +
+            "and (a.airdropDate < :today)" +
+            "order by a.airdropDate desc " +
+            "nulls last")
+    List<AirdropSchedule> findByExpiredAirdropDate(@Param("categories") List<AirdropCategories> categories, LocalDateTime today);
 
     @Query("select a from AirdropSchedule a " +
             "left join a.scheduleCategory s " +

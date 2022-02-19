@@ -49,9 +49,19 @@ public class AirdropPublisherController {
         return ResponseEntity.ok(airdropScheduleService.getHoldersAirdrops());
     }
 
+    @GetMapping("/faucets")
+    public ResponseEntity getFaucetsAirdrop() {
+        return ResponseEntity.ok(airdropScheduleService.getFaucetsAirdrops());
+    }
+
     @GetMapping("/calendar/airdrop")
     public ResponseEntity getAirdropsByAirdropDate() {
         return ResponseEntity.ok(airdropScheduleService.getAllAirdropsByAirdropDate());
+    }
+
+    @GetMapping("/calendar/expired")
+    public ResponseEntity getExpiredAirdrops() {
+        return ResponseEntity.ok(airdropScheduleService.getAllExpiredAirdrops());
     }
 
     @GetMapping("/calendar/added")

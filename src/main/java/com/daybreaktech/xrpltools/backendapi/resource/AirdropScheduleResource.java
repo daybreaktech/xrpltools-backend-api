@@ -27,5 +27,7 @@ public class AirdropScheduleResource {
     private String formUrl;
     private String imageUrl;
     private Boolean useTrustlineImg;
+    private Boolean isAirdropExpired;
+    private Boolean isSnapshotExpired;
 
 }
