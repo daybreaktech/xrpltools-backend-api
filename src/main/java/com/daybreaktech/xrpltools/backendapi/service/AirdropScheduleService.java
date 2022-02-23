@@ -473,7 +473,7 @@ public class AirdropScheduleService {
     private NotificationDisplay decorateForAirdropDate(AirdropScheduleResource resource) {
         NotificationDisplay notificationDisplay = NotificationDisplay.builder()
                 .title(generateTitle(resource, "Airdrop Alert!"))
-                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getSnapshotDate()))
+                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getAirdropDate()))
                 .iconUrl("images/xrp-airdrop-icon.png")
                 .actionButtonLabel("More Details")
                 .actionButtonLink(generateAirdropDetailsUrl(resource.getCode()))
@@ -495,7 +495,7 @@ public class AirdropScheduleService {
     private NotificationDisplay decorateForNewAirdrop(AirdropScheduleResource resource) {
         NotificationDisplay notificationDisplay = NotificationDisplay.builder()
                 .title("New Airdrop Alert!")
-                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getSnapshotDate()))
+                .description(generateBody(resource.getTrustline(), "Airdrop", resource.getAirdropDate()))
                 .iconUrl("images/xrp-airdrop-icon.png")
                 .actionButtonLabel("More Details")
                 .actionButtonLink(generateAirdropDetailsUrl(resource.getCode()))
