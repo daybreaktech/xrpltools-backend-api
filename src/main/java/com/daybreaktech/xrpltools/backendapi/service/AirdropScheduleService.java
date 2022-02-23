@@ -241,6 +241,12 @@ public class AirdropScheduleService {
         map.put("tokenName", generateTokenName(airdropScheduleResource.getTrustline()));
         map.put("airdropDetailsLink", generateAirdropDetailsUrl(airdropScheduleResource.getCode()));
 
+        List<String> tags = airdropScheduleResource.getTags();
+
+        if (tags!= null && !tags.isEmpty() && tags.contains("GID")) {
+            map.put("hasGlobalId", true);
+        }
+
         if (airdropScheduleResource.getFormUrl() != null) {
             map.put("formUrl", airdropScheduleResource.getFormUrl());
         }

@@ -5,6 +5,9 @@ Airdrop: ${airdropDate} :balloon:
 <#if formUrl??>
 Form: ${formUrl} :clipboard:
 </#if>
+<#if hasGlobalId??>
+* Global ID Required *
+</#if>
 Token: ${tokenName} :moneybag:
 
 <#if trustlineLink??>
