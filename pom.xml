@@ -49,6 +49,11 @@
 			<version>2.6.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
+
         <!--Security-->
 
 		<dependency>
@@ -85,6 +90,14 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
+		</dependency>
+
+		<!--Discord-->
+
+		<dependency>
+			<groupId>net.dv8tion</groupId>
+			<artifactId>JDA</artifactId>
+			<version>5.0.0-alpha.6</version>
 		</dependency>
 
 	</dependencies>

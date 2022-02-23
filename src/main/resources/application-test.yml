@@ -23,6 +23,14 @@ web-push:
   privateKey: 8r2KdeVetq01Ld0KknI_LBKtsmwO0q4b-XFzXxIqpZ0
   publicKey: BGGqjHMHQhSmIkG9TKJWXsEWgwZDtQ6GyPBlucZs5IDrCIGcTw1vQjiO9KvYjeICpogvLj7C0jNYAQvRDJKR51Q
 
+discord:
+  guildId: 942151807239602198
+  bot:
+    id: 946149221806006362
+    apiKey: OTQ2MTQ5MjIxODA2MDA2MzYy.YhagIQ.ub0fYNHTQvdBGT6NoNoKhw991-g
+  channels:
+    test: 946019340413714482
+
 #spring:
 #  datasource:
 #    url: jdbc:mysql://20.127.73.70:3306/xrpltools?autoReconnect=true

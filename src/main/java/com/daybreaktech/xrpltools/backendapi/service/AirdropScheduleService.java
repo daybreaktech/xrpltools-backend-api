@@ -4,6 +4,7 @@ import com.daybreaktech.xrpltools.backendapi.domain.*;
 import com.daybreaktech.xrpltools.backendapi.dto.AirdropItem;
 import com.daybreaktech.xrpltools.backendapi.dto.NotificationDisplay;
 import com.daybreaktech.xrpltools.backendapi.exceptions.XrplToolsException;
+import com.daybreaktech.xrpltools.backendapi.helpers.TemplateHelper;
 import com.daybreaktech.xrpltools.backendapi.repository.AirdropNotificationLogRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.AirdropScheduleRepository;
 import com.daybreaktech.xrpltools.backendapi.repository.PushNotificationSubscriptionRepository;
@@ -18,14 +19,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -53,12 +53,14 @@ public class AirdropScheduleService {
     @Autowired
     private PushNotificationService pushNotificationService;
 
+    @Autowired
+    private DiscordBotService discordBotService;
+
     @Value("${web-ui-main}")
     private String webUIUrl;
 
     List<AirdropCategories> excludedCategories = Arrays.asList(AirdropCategories.TRASH);
     List<AirdropCategories> excludedCategoriesForAirdrops = Arrays.asList(AirdropCategories.TRASH, AirdropCategories.HOLDERS);
-
 
     public void logAirdropNotification(String airdropCode, AirdropNotificationType type) {
         AirdropNotificationLog notificationLog = AirdropNotificationLog.builder()
@@ -208,9 +210,51 @@ public class AirdropScheduleService {
         validateAirdropCode(airdropSchedule);
         AirdropSchedule newAirdropSchedule = airdropScheduleRepository.save(airdropSchedule);
 
+        if (newAirdropSchedule.getTrustline() != null && airdropScheduleResource.getTrustline() != null) {
+            airdropScheduleResource.getTrustline().setIssuerAddress(newAirdropSchedule.getTrustline().getIssuerAddress());
+            airdropScheduleResource.getTrustline().setLimit(newAirdropSchedule.getTrustline().getLimit());
+            airdropScheduleResource.getTrustline().setTwitterUrl(newAirdropSchedule.getTrustline().getTwitterUrl());
+        }
+
         sendNotificationForNewAirdrop(airdropScheduleResource);
+        sendDiscordNotification(airdropScheduleResource);
 
         return newAirdropSchedule;
+    }
+
+    @Async("asyncExecutor")
+    private void sendDiscordNotification(AirdropScheduleResource airdropScheduleResource) {
+        try {
+            if (airdropScheduleResource.getId() == null) {
+                discordBotService.sendMessageToChannel(generateNewAirdropMessage(airdropScheduleResource));
+            }
+        } catch (IOException e) {
+            logger.error("Error posting in Discord: " + e);
+        }
+    }
+
+    private String generateNewAirdropMessage(AirdropScheduleResource airdropScheduleResource) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("snapshotDate", generateDate(airdropScheduleResource.getSnapshotDate()));
+        map.put("airdropDate", generateDate(airdropScheduleResource.getAirdropDate()));
+        map.put("tokenName", generateTokenName(airdropScheduleResource.getTrustline()));
+        map.put("airdropDetailsLink", generateAirdropDetailsUrl(airdropScheduleResource.getCode()));
+
+        if (airdropScheduleResource.getFormUrl() != null) {
+            map.put("formUrl", airdropScheduleResource.getFormUrl());
+        }
+
+        if (airdropScheduleResource.getTrustline() != null) {
+            TrustlineResource trustlineResource = airdropScheduleResource.getTrustline();
+
+            if (trustlineResource != null) {
+                map.put("twitterUrl", trustlineResource.getTwitterUrl());
+                map.put("trustlineLink", generateTrustlineLink(trustlineResource));
+            }
+        }
+
+        return TemplateHelper.generateFromTemplate(this.getClass(), "new-airdrops", map);
     }
 
     private void validateAirdropCode(AirdropSchedule airdropSchedule) throws XrplToolsException {
@@ -367,6 +411,7 @@ public class AirdropScheduleService {
     /*Notifications*/
     @Async("asyncExecutor")
     private void sendNotificationForNewAirdrop(AirdropScheduleResource airdropScheduleResource) {
+
         if (airdropScheduleResource.getId() == null) {
             List<PushNotificationSubscription> subscriptions
                     = (List<PushNotificationSubscription>) pushNotificationSubscriptionRepository.findAll();
@@ -488,8 +533,17 @@ public class AirdropScheduleService {
     }
 
     private String generateDate(LocalDateTime date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-        return date.format(formatter);
+        if (date != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+            return date.format(formatter);
+        } else {
+            return "TBA";
+        }
+    }
+
+    private String generateTrustlineLink(TrustlineResource trustlineResource) {
+        return String.format("https://xrpl.services/?issuer=%s&currency=%s&limit=%s",
+                trustlineResource.getIssuerAddress(), trustlineResource.getName(), trustlineResource.getLimit());
     }
 
     private void processSendNotification(Object obj, List<PushNotificationSubscription> subscriptions) {

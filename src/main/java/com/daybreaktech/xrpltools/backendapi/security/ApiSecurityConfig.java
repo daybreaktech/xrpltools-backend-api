@@ -67,6 +67,7 @@ public class ApiSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests().antMatchers(apiContext + "/airdrop/publisher/**").anonymous().and()
             .authorizeRequests().antMatchers(apiContext + "/notifications/**").anonymous().and()
             .authorizeRequests().antMatchers(apiContext + "/misc/**").anonymous().and()
+                .authorizeRequests().antMatchers(apiContext + "/bot/**").anonymous().and()
 
             //AIRDROP and TRUSTLINE Admins
             .authorizeRequests().antMatchers(apiContext + "/airdrop/**").hasAnyAuthority("SUPER_ADMIN", "AIRDROP_ADMIN").and()
