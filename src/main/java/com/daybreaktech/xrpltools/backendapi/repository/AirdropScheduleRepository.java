@@ -42,19 +42,23 @@ public interface AirdropScheduleRepository extends CrudRepository<AirdropSchedul
 
     @Query("select a from AirdropSchedule a " +
             "left join a.scheduleCategory s " +
-            "where (s is null or s.category not in (:categories)) " +
-            "and (a.airdropDate >= :today or a.airdropDate is null)" +
+            "where (a.airdropDate >= :today or s.category = :category) " +
+            "and (s is null or s.category not in (:excludedCategories)) " +
             "order by a.airdropDate asc " +
             "nulls last")
-    List<AirdropSchedule> findByAirdropDate(@Param("categories") List<AirdropCategories> categories, LocalDateTime today);
+    List<AirdropSchedule> findByAirdropDate(@Param("category") AirdropCategories category,
+                                            LocalDateTime today,
+                                            @Param("excludedCategories") List<AirdropCategories> categories);
 
     @Query("select a from AirdropSchedule a " +
             "left join a.scheduleCategory s " +
-            "where (s is null or s.category not in (:categories)) " +
-            "and (a.airdropDate < :today)" +
+            "where (a.airdropDate < :today or s.category = :category) " +
+            "and (s is null or s.category not in (:excludedCategories)) " +
             "order by a.airdropDate desc " +
             "nulls last")
-    List<AirdropSchedule> findByExpiredAirdropDate(@Param("categories") List<AirdropCategories> categories, LocalDateTime today);
+    List<AirdropSchedule> findByExpiredAirdropDate(@Param("category") AirdropCategories category,
+                                                   LocalDateTime today,
+                                                   @Param("excludedCategories") List<AirdropCategories> categories);
 
     @Query("select a from AirdropSchedule a " +
             "left join a.scheduleCategory s " +

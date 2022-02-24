@@ -133,7 +133,7 @@ public class AirdropScheduleService {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
         LocalDateTime maxTime = LocalDateTime.now().minusDays(1);
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(excludedCategoriesForAirdrops, maxTime);
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByAirdropDate(AirdropCategories.MISC, maxTime, excludedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
@@ -142,7 +142,8 @@ public class AirdropScheduleService {
     public List<AirdropScheduleResource> getAllExpiredAirdrops() {
         List<AirdropScheduleResource> airdropScheduleResources = new ArrayList<>();
 
-        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByExpiredAirdropDate(excludedCategories, LocalDateTime.now());
+        List<AirdropSchedule> airdropSchedules = airdropScheduleRepository.findByExpiredAirdropDate(AirdropCategories.EXPIRED,
+                LocalDateTime.now(), excludedCategories);
         airdropSchedules.stream().map(airdropSchedule -> convertToResource(airdropSchedule))
                 .forEach(airdropScheduleResources::add);
         return airdropScheduleResources;
