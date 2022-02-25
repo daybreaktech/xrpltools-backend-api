@@ -248,7 +248,8 @@ public class AirdropScheduleService {
             map.put("hasGlobalId", true);
         }
 
-        if (airdropScheduleResource.getFormUrl() != null) {
+        if (airdropScheduleResource.getFormUrl() != null &&
+                !airdropScheduleResource.getFormUrl().isEmpty()) {
             map.put("formUrl", airdropScheduleResource.getFormUrl());
         }
 

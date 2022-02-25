@@ -19,16 +19,19 @@ public class AirdropPublisherController {
     @Autowired
     private AirdropScheduleService airdropScheduleService;
 
+    @Deprecated
     @PostMapping("/")
     public void publishAirdrops() throws JsonProcessingException {
         airdropPublisherService.generateAndSave();
     }
 
+    @Deprecated
     @GetMapping("/")
     public ResponseEntity getOrderedSchedules() throws JsonProcessingException {
         return ResponseEntity.ok(airdropPublisherService.getOrderedSchedules());
     }
 
+    @Deprecated
     @GetMapping("/{code}")
     public ResponseEntity getScheduleByCodeOld(@PathVariable("code") String code) throws XrplToolsException {
         return ResponseEntity.ok(airdropPublisherService.findByCode(code));

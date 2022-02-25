@@ -1,6 +1,6 @@
 :loudspeaker: NEW Airdrop!! :gift: :balloon:
 
-Snapshot: ${snapshotDate} :balloon:
+Snapshot: ${snapshotDate} :camera_with_flash:
 Airdrop: ${airdropDate} :balloon:
 <#if formUrl??>
 Form: ${formUrl} :clipboard:
