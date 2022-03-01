@@ -33,6 +33,10 @@ discord:
   stats:
     xrp-price-voice-channel: 948235991745986621
 
+twitter:
+  auth:
+    secretKey: TNVBcZyjQ0vMVSgVjlVt1xTOMJq9Xh5GmrdLKomFnAiHIm47Gz
+
 #spring:
 #  datasource:
 #    url: jdbc:mysql://20.127.73.70:3306/xrpltools?autoReconnect=true
