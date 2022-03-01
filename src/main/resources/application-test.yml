@@ -29,7 +29,9 @@ discord:
     id: 946149221806006362
     apiKey: OTQ2MTQ5MjIxODA2MDA2MzYy.YhagIQ.ub0fYNHTQvdBGT6NoNoKhw991-g
   channels:
-    test: 946019340413714482
+    new-airdrop-channel: 946019340413714482
+  stats:
+    xrp-price-voice-channel: 948235991745986621
 
 #spring:
 #  datasource:

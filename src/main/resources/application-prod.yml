@@ -23,7 +23,15 @@ web-push:
   privateKey: rrRSoa1wkRRl1uSNlWXHsXIxR36yvtFpZwbWWAE8VL8
   publicKey: BI4ApzTJzQKQC2uVI612iX5lP6cvIZFZZVOGFBXwCzPwovkwvp3B4_LwsybRSpLHGs402AMd1yvMSpKNwEW143Y
 
-
+discord:
+  guildId: 942151807239602198
+  bot:
+    id: 948239992025673940
+    apiKey: OTQ4MjM5OTkyMDI1NjczOTQw.Yh47Tw.MMh8Ne4fTvGXRahbpQgTcR-Hez4
+  channels:
+    new-airdrop-channel: 942185180528009227
+  stats:
+    xrp-price-voice-channel: 948235991745986621
 
 #spring:
 #  datasource:

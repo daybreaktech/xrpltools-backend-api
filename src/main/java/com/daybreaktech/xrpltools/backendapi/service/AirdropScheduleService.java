@@ -59,6 +59,9 @@ public class AirdropScheduleService {
     @Value("${web-ui-main}")
     private String webUIUrl;
 
+    @Value("${discord.channels.new-airdrop-channel}")
+    private Long newAirdropChannel;
+
     List<AirdropCategories> excludedCategories = Arrays.asList(AirdropCategories.TRASH);
     List<AirdropCategories> excludedCategoriesForAirdrops = Arrays.asList(AirdropCategories.TRASH, AirdropCategories.HOLDERS);
 
@@ -227,7 +230,7 @@ public class AirdropScheduleService {
     private void sendDiscordNotification(AirdropScheduleResource airdropScheduleResource) {
         try {
             if (airdropScheduleResource.getId() == null) {
-                discordBotService.sendMessageToChannel(generateNewAirdropMessage(airdropScheduleResource));
+                discordBotService.sendMessageToChannel(generateNewAirdropMessage(airdropScheduleResource), newAirdropChannel);
             }
         } catch (IOException e) {
             logger.error("Error posting in Discord: " + e);
