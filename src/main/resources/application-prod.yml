@@ -33,18 +33,6 @@ discord:
   stats:
     xrp-price-voice-channel: 948235991745986621
 
-#spring:
-#  datasource:
-#    url: jdbc:mysql://20.127.73.70:3306/xrpltools?autoReconnect=true
-#    username: xrpldbuser
-#    password: Pass1word
-#    max-lifetime: 600000
-#  task:
-#    scheduling:
-#      pool:
-#        size: 10
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: false
-#    database: mysql
+twitter:
+  auth:
+    secretKey: TNVBcZyjQ0vMVSgVjlVt1xTOMJq9Xh5GmrdLKomFnAiHIm47Gz #TODO: Change from Test
