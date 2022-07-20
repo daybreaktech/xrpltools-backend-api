@@ -566,7 +566,7 @@ public class AirdropScheduleService {
         }
     }
 
-    @Scheduled(fixedDelay = 600000)
+    //@Scheduled(fixedDelay = 600000)
     public void processAutoSendNotificationAirdropDate() {
         try {
             findExecuteAirdropSchedule(AirdropNotificationType.AIRDROP_TWO_DAYS_LEFT);
@@ -575,7 +575,7 @@ public class AirdropScheduleService {
         }
     }
 
-    @Scheduled(fixedDelay = 600000)
+    //@Scheduled(fixedDelay = 600000)
     public void processAutoSendNotificationSnapshotDateDate() {
         try {
             findExecuteAirdropSchedule(AirdropNotificationType.SNAPSHOT_TWO_DAYS_LEFT);
