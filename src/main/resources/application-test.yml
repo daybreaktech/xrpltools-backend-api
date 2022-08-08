@@ -20,9 +20,14 @@ spring:
 web-ui: https://xrpltoolsadmintest.github.io/
 web-ui-main: https://xrpltoolstest.github.io/
 
+#OLD
+#web-push:
+#  privateKey: 8r2KdeVetq01Ld0KknI_LBKtsmwO0q4b-XFzXxIqpZ0
+#  publicKey: BGGqjHMHQhSmIkG9TKJWXsEWgwZDtQ6GyPBlucZs5IDrCIGcTw1vQjiO9KvYjeICpogvLj7C0jNYAQvRDJKR51Q
+
 web-push:
-  privateKey: 8r2KdeVetq01Ld0KknI_LBKtsmwO0q4b-XFzXxIqpZ0
-  publicKey: BGGqjHMHQhSmIkG9TKJWXsEWgwZDtQ6GyPBlucZs5IDrCIGcTw1vQjiO9KvYjeICpogvLj7C0jNYAQvRDJKR51Q
+  privateKey: rrRSoa1wkRRl1uSNlWXHsXIxR36yvtFpZwbWWAE8VL8
+  publicKey: BI4ApzTJzQKQC2uVI612iX5lP6cvIZFZZVOGFBXwCzPwovkwvp3B4_LwsybRSpLHGs402AMd1yvMSpKNwEW143Y
 
 discord:
   guildId: 942151807239602198
