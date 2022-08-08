@@ -17,8 +17,12 @@ spring:
       dialect: org.hibernate.dialect.SQLServer2012Dialect
     show-sql: false
 
-web-ui: https://xrpltoolsadmintest.github.io/
-web-ui-main: https://xrpltoolstest.github.io/
+#OLD
+#web-ui: https://xrpltoolsadmintest.github.io/
+#web-ui-main: https://xrpltoolstest.github.io/
+
+web-ui: https://xrpltoolsadmin.github.io/
+web-ui-main: https://xrpltools.com/
 
 #OLD
 #web-push:
